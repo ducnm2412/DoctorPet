@@ -1,0 +1,38 @@
+# Cấu hình production - kích hoạt bằng SPRING_PROFILES_ACTIVE=prod
+# Các biến bắt buộc (không có giá trị mặc định): DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET, CORS_ORIGINS
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+jwt:
+  secret: ${JWT_SECRET}
+
+logging:
+  level:
+    root: INFO
+    com.docpet.animalhospital: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN

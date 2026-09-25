@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "remixicon/fonts/remixicon.css";
 import "../css/AppointmentDetail.css";
 import { useParams } from "react-router-dom";
+import { API_URL } from "../../config";
 
 
 const AppointmentDetail = () => {
@@ -19,7 +20,7 @@ const AppointmentDetail = () => {
 
         try {
             setLoading(true);
-            const res = await fetch(`http://localhost:8080/api/appointments/${id}`, {
+            const res = await fetch(`${API_URL}/api/appointments/${id}`, {
                 headers: { Authorization: `Bearer ${jwt}` }
             });
 

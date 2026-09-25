@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../css/ScheduleItem.css";
 import ButtonMessage from "../../message/ButtonMessage";
 import ChatBox from "../../message/ChatBox";
+import { API_URL } from "../../config";
 
 const ScheduleItem = (props) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -44,7 +45,7 @@ const ScheduleItem = (props) => {
         if (!jwt) return;
 
         const res = await fetch(
-          `http://localhost:8080/api/appointments/${props.id}/messages`,
+          `${API_URL}/api/appointments/${props.id}/messages`,
           {
             headers: {
               Authorization: `Bearer ${jwt}`,

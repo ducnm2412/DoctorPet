@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../css/Appointment.css";
 import Swal from 'sweetalert2'
+import { API_URL } from "../../config";
 const Appointment = ({ token }) => {
   const [formData, setFormData] = useState({
     timeStart: "",
@@ -34,8 +35,8 @@ const jwt = localStorage.getItem("jwt");
 
       try {
         const [petsRes, vetsRes] = await Promise.all([
-          fetch("http://localhost:8080/api/pets", { headers }), 
-          fetch("http://localhost:8080/api/vets", { headers }), 
+          fetch(`${API_URL}/api/pets`, { headers }), 
+          fetch(`${API_URL}/api/vets`, { headers }), 
         ]);
 
         let initialPetId = "";
@@ -103,7 +104,7 @@ const jwt = localStorage.getItem("jwt");
     
     // đặt lịch khám
     try {
-      const res = await fetch("http://localhost:8080/api/appointments", {
+      const res = await fetch(`${API_URL}/api/appointments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

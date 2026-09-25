@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import "../css/AddSup.css";
+import { API_URL } from "../../config";
 const AddSup = (props) => {
   const [form, setForm] = useState({
     login: "",
@@ -36,8 +37,8 @@ const AddSup = (props) => {
     e.preventDefault();
 
     const url = props.assistant
-      ? `http://localhost:8080/api/vets/assistants/${props.assistant.id}`
-      : "http://localhost:8080/api/vets/assistants";
+      ? `${API_URL}/api/vets/assistants/${props.assistant.id}`
+      : `${API_URL}/api/vets/assistants`;
 
     const method = props.assistant ? "PUT" : "POST";
 

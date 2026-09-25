@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../css/Register.css";
 import Swal from "sweetalert2";
+import { API_URL } from "../config";
 
 const RegisterVet = () => {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ const RegisterVet = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:8080/api/register-vet", {
+      const res = await fetch(`${API_URL}/api/register-vet`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

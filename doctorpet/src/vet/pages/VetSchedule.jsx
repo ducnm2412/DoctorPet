@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ScheduleItem from "../components/ScheduleItem";
 import DetailAppointment from "../components/DetailAppointment";
+import { API_URL } from "../../config";
 
 const VetSchedule = ({ vetId, nameVet }) => {
   const [appointments, setAppointments] = useState([]);
@@ -16,7 +17,7 @@ const VetSchedule = ({ vetId, nameVet }) => {
     const fetchAppointments = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:8080/api/appointments", {
+        const res = await fetch(`${API_URL}/api/appointments`, {
           headers: { Authorization: `Bearer ${jwt}` },
         });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);

@@ -92,7 +92,7 @@ doan_cnpm/
 cd animal-hospital-springboot
 
 # 1. Tạo database MySQL tên 'animalhospital' và nạp dữ liệu từ file sql.sql
-# 2. Cấu hình lại username/password MySQL trong application.yml nếu cần
+# 2. Mặc định kết nối MySQL localhost với root/1234; đổi qua biến môi trường DB_URL, DB_USERNAME, DB_PASSWORD nếu cần
 
 # 3. Build và chạy Backend
 mvn clean install
@@ -111,6 +111,38 @@ npm install
 npm run dev
 ```
 Frontend sẽ chạy tại: `http://localhost:5173`
+
+---
+
+## ☁️ Deploy lên Web
+
+Kiến trúc: **Vercel** (Frontend) → **Render** (Backend, Docker) → **MySQL** (Railway / Aiven).
+
+### 1. Database
+Tạo MySQL trên Railway hoặc Aiven, sau đó nạp dữ liệu: `mysql -h <host> -P <port> -u <user> -p <database> < sql.sql`
+
+### 2. Backend (Render)
+New → Web Service → chọn repo → Root Directory: `animal-hospital-springboot` → Runtime: **Docker** → Health Check Path: `/management/health`.
+
+Dockerfile đã bật sẵn profile `prod` (`application-prod.yml`). Khai báo các biến môi trường:
+
+| Biến | Bắt buộc | Ví dụ / Ghi chú |
+| :--- | :---: | :--- |
+| `DB_URL` | ✅ | `jdbc:mysql://<host>:<port>/<database>?useSSL=true&useUnicode=true&characterEncoding=utf8` |
+| `DB_USERNAME` | ✅ | |
+| `DB_PASSWORD` | ✅ | |
+| `JWT_SECRET` | ✅ | Chuỗi Base64 ngẫu nhiên, tạo bằng `openssl rand -base64 32` |
+| `CORS_ORIGINS` | ✅ | URL frontend, ví dụ `https://doctorpet.vercel.app` (nhiều URL phân tách bằng dấu phẩy) |
+| `GEMINI_API_KEY` | | Chỉ cần khi bật AI |
+| `AI_ENABLED` | | `true` để dùng Gemini, mặc định `false` (dùng dữ liệu trong DB) |
+
+### 3. Frontend (Vercel)
+Import repo → Root Directory: `doctorpet` → Framework: **Vite** → Environment Variable:
+`VITE_API_URL=https://<backend>.onrender.com` (không có `/` ở cuối).
+
+File `vercel.json` đã cấu hình để React Router hoạt động khi tải lại trang.
+
+> Sau khi có URL frontend, nhớ cập nhật `CORS_ORIGINS` trên Render cho khớp.
 
 ---
 

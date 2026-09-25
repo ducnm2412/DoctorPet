@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../css/Chatbox.css";
+import { API_URL } from "../../config";
 
 export default function ChatBox({ appointmentId, currentUser }) {
     const [messages, setMessages] = useState([]);
@@ -15,7 +16,7 @@ export default function ChatBox({ appointmentId, currentUser }) {
     useEffect(() => {
         const fetchMessages = async () => {
             try {
-                const res = await fetch(`http://localhost:8080/api/appointments/${appointmentId}/messages`, {
+                const res = await fetch(`${API_URL}/api/appointments/${appointmentId}/messages`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("jwt")}`
                     }
@@ -40,7 +41,7 @@ export default function ChatBox({ appointmentId, currentUser }) {
         if (!input.trim()) return;
 
         try {
-            const res = await fetch(`http://localhost:8080/api/appointments/${appointmentId}/messages`, {
+            const res = await fetch(`${API_URL}/api/appointments/${appointmentId}/messages`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

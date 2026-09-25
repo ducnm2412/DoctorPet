@@ -3,9 +3,10 @@ spring:
     name: animalHospital
 
   datasource:
-    url: jdbc:mysql://localhost:3306/animalhospital?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: root
-    password: 1234
+    # Giá trị mặc định dùng cho máy local; khi deploy set qua biến môi trường
+    url: ${DB_URL:jdbc:mysql://localhost:3306/animalhospital?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -19,18 +20,18 @@ spring:
         jdbc:
           time_zone: UTC
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:8080
-
 server:
-  port: 8080
+  port: ${PORT:8080}
+
+app:
+  cors:
+    # Danh sách origin của frontend, phân tách bằng dấu phẩy
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
 
 management:
   endpoints:
     web:
+      base-path: /management # khớp với các rule trong SecurityConfiguration
       exposure:
         include: health,info,metrics
   endpoint:
@@ -38,19 +39,20 @@ management:
       show-details: always
 
 jwt:
-  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  # Secret mặc định chỉ dùng cho local - profile prod bắt buộc set JWT_SECRET
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
   token-validity-in-seconds: 86400
   token-validity-in-seconds-for-remember-me: 2592000
 
 ai:
   provider: gemini # openai, gemini
-  api-key: ${GEMINI_API_KEY:AIzaSyAXuPZBgzn759AHLHBgamy3HgZJFj16Q0Y} # Gemini API key - nên dùng environment variable
+  api-key: ${GEMINI_API_KEY:} # Gemini API key - set qua biến môi trường, không commit key vào code
   api-url: ${AI_API_URL:} # Optional, defaults to provider's default URL
   model: gemini-2.0-flash-001 # Model name - Stable version, có generateContent trong v1beta API
   max-tokens: 1000
   temperature: 0.8 # Tăng lên để response tự nhiên hơn (0.7-0.9 là tốt cho conversation tự nhiên)
   timeout: 30 # seconds
-  enabled: false # Set to false to use fallback (knowledge from database) - Tạm thời disable vì hết quota free tier
+  enabled: ${AI_ENABLED:false} # false = dùng fallback (knowledge from database)
 
 logging:
   level:

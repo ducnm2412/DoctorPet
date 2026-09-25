@@ -3,6 +3,7 @@ import AddSup from "../components/AddSup";
 import SupItem from "../components/SupItem";
 import "../css/VetProfileSup.css";
 import Swal from "sweetalert2";
+import { API_URL } from "../../config";
 const VetProfileSup = () => {
   const [assistants, setAssistants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ const VetProfileSup = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8080/api/vets/assistants", {
+      const res = await fetch(`${API_URL}/api/vets/assistants`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
@@ -78,7 +79,7 @@ const handleDelete = async (assistantId) => {
     });
 
     const res = await fetch(
-      `http://localhost:8080/api/vets/assistants/${assistantId}`,
+      `${API_URL}/api/vets/assistants/${assistantId}`,
       {
         method: "DELETE",
         headers: {
@@ -117,7 +118,7 @@ const handleDelete = async (assistantId) => {
       setSelectedAssistantId(assistantId);
 
       const res = await fetch(
-        `http://localhost:8080/api/vets/assistants/${assistantId}/appointments`,
+        `${API_URL}/api/vets/assistants/${assistantId}/appointments`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,

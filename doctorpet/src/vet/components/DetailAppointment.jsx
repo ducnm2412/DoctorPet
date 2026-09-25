@@ -3,6 +3,7 @@ import "../css/DetailAppointment.css";
 import Swal from "sweetalert2";
 import ButtonMessage from "../../message/ButtonMessage";
 import ChatBox from "../../message/ChatBox";
+import { API_URL } from "../../config";
 
 const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
   const [appointment, setAppointment] = useState(null);
@@ -21,7 +22,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8080/api/vet/appointments/${appointmentId}/detail`,
+          `${API_URL}/api/vet/appointments/${appointmentId}/detail`,
           {
             headers: { Authorization: `Bearer ${vetToken}` },
           }
@@ -51,7 +52,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
       if (!jwt) return;
 
       const res = await fetch(
-        `http://localhost:8080/api/appointments/${appointmentId}/messages`,
+        `${API_URL}/api/appointments/${appointmentId}/messages`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -111,7 +112,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
   const approveAppointment = async (assistantId, note) => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/vet/appointments/${appointmentId}/approve`,
+        `${API_URL}/api/vet/appointments/${appointmentId}/approve`,
         {
           method: "POST",
           headers: {
@@ -156,7 +157,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
 
     try {
       // Lấy danh sách trợ lý
-      const res = await fetch("http://localhost:8080/api/vets/assistants", {
+      const res = await fetch(`${API_URL}/api/vets/assistants`, {
         headers: { Authorization: `Bearer ${vetToken}` },
       });
       const assistants = await res.json();
@@ -220,7 +221,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
 
         // Phân công assistant
         const assignRes = await fetch(
-          `http://localhost:8080/api/vet/appointments/${appointmentId}/assign-assistant`,
+          `${API_URL}/api/vet/appointments/${appointmentId}/assign-assistant`,
           {
             method: "POST",
             headers: {
@@ -272,7 +273,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
 
       try {
         const res = await fetch(
-          `http://localhost:8080/api/vet/appointments/${appointmentId}/reject`,
+          `${API_URL}/api/vet/appointments/${appointmentId}/reject`,
           {
             method: "POST",
             headers: {
@@ -309,7 +310,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/vet/appointments/${appointmentId}/reschedule`,
+        `${API_URL}/api/vet/appointments/${appointmentId}/reschedule`,
         {
           method: "POST",
           headers: {
@@ -357,7 +358,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
       const requestBody = formData ? { notes: formData } : { notes: null };
 
       const res = await fetch(
-        `http://localhost:8080/api/vet/appointments/${appointmentId}/request-home-visit`,
+        `${API_URL}/api/vet/appointments/${appointmentId}/request-home-visit`,
         {
           method: "POST",
           headers: {

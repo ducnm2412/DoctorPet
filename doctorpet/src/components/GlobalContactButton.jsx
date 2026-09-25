@@ -4,6 +4,7 @@ import ContactButton from "./ContactButton";
 import ChatBox from "../message/ChatBox";
 import Swal from "sweetalert2";
 import "remixicon/fonts/remixicon.css";
+import { API_URL } from "../config";
 
 const GlobalContactButton = () => {
   const location = useLocation();
@@ -52,7 +53,7 @@ const GlobalContactButton = () => {
 
     const fetchAppointments = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/appointments", {
+        const response = await fetch(`${API_URL}/api/appointments`, {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },

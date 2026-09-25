@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ScheduleItem from "../components/ScheduleItem";
 import "../css/Schedule.css";
+import { API_URL } from "../../config";
 
 const Schedule = () => {
   const [appointments, setAppointments] = useState([]);
@@ -25,7 +26,7 @@ const Schedule = () => {
       };
       
       try {
-        const response = await fetch("http://localhost:8080/api/appointments", {
+        const response = await fetch(`${API_URL}/api/appointments`, {
           method: "GET",
           headers: headers,
         });

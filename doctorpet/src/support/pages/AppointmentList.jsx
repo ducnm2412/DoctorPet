@@ -6,6 +6,7 @@ import {
   getBadgeClass,
   getLocation,
 } from "../components/appointmentFormatter";
+import { API_URL } from "../../config";
 const AppointmentList = () => {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
@@ -22,7 +23,7 @@ const AppointmentList = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8080/api/appointments", {
+      const res = await fetch(`${API_URL}/api/appointments`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },

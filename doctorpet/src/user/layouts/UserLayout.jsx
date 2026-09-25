@@ -8,6 +8,7 @@ import Schedule from "../pages/Schedule";
 import Question from "../pages/Question";
 import Swal from "sweetalert2";
 import ChatBox from "../../message/ChatBox";
+import { API_URL } from "../../config";
 
 const UserLayout = () => {
   const [active, setActive] = useState("profile");
@@ -30,7 +31,7 @@ const UserLayout = () => {
     const fetchOwners = async () => {
       try {
         const jwt = localStorage.getItem("jwt");
-        const response = await fetch("http://localhost:8080/api/owners", {
+        const response = await fetch(`${API_URL}/api/owners`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${jwt}`,
@@ -69,7 +70,7 @@ const UserLayout = () => {
       try {
         const jwt = localStorage.getItem("jwt");
         const response = await fetch(
-          `http://localhost:8080/api/owners/${ownerId}`,
+          `${API_URL}/api/owners/${ownerId}`,
           {
             headers: {
               Authorization: `Bearer ${jwt}`,
@@ -127,7 +128,7 @@ const UserLayout = () => {
 
         // Lấy danh sách appointments
         const appointmentsRes = await fetch(
-          "http://localhost:8080/api/appointments",
+          `${API_URL}/api/appointments`,
           {
             headers: {
               Authorization: `Bearer ${jwt}`,
@@ -146,7 +147,7 @@ const UserLayout = () => {
         const notificationPromises = appointmentList.map(async (appt) => {
           try {
             const messagesRes = await fetch(
-              `http://localhost:8080/api/appointments/${appt.id}/messages`,
+              `${API_URL}/api/appointments/${appt.id}/messages`,
               {
                 headers: {
                   Authorization: `Bearer ${jwt}`,
@@ -205,7 +206,7 @@ const UserLayout = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/owners/${userInfo.id}`,
+        `${API_URL}/api/owners/${userInfo.id}`,
         {
           method: "PUT",
           headers: {

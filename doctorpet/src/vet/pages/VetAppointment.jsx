@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ScheduleItem from "../components/ScheduleItem";
 import DetailAppointment from "../components/DetailAppointment";
+import { API_URL } from "../../config";
 
 const VetAppointment = (props) => {
   const [appointments, setAppointments] = useState([]);
@@ -9,7 +10,7 @@ const VetAppointment = (props) => {
   useEffect(() => {
     if (!jwt) return;
 
-    fetch("http://localhost:8080/api/appointments", {
+    fetch(`${API_URL}/api/appointments`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

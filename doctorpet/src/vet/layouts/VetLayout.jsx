@@ -5,6 +5,7 @@ import "remixicon/fonts/remixicon.css";
 import VetSchedule from "../pages/VetSchedule";
 import VetAppointment from "../pages/VetAppointment";
 import VetProfileSup from "../pages/VetProfileSup";
+import { API_URL } from "../../config";
 
 const VetLayout = () => {
   const [active, setActive] = useState("appointment");
@@ -36,7 +37,7 @@ const VetLayout = () => {
   useEffect(() => {
     if (!jwt) return;
 
-    fetch("http://localhost:8080/api/vets", {
+    fetch(`${API_URL}/api/vets`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

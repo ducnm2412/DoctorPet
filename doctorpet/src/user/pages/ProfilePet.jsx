@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PetItem from "../components/PetItem";
 import SiderbarPet from "../components/SiderbarPet";
 import "../css/ProfilePet.css";
+import { API_URL } from "../../config";
 
 const ProfilePet = (props) => {
   const [pets, setPets] = useState([]);
@@ -15,7 +16,7 @@ const ProfilePet = (props) => {
 
       try {
         const res = await fetch(
-          `http://localhost:8080/api/pets`,
+          `${API_URL}/api/pets`,
           {
             headers: { Authorization: `Bearer ${jwt}` },
           }
@@ -51,8 +52,8 @@ const ProfilePet = (props) => {
     // 
     const bodyData = { ...data, ownerId: props.ownerId };
     const url = activePetItemId
-      ? `http://localhost:8080/api/pets/${activePetItemId}`
-      : "http://localhost:8080/api/pets";
+      ? `${API_URL}/api/pets/${activePetItemId}`
+      : `${API_URL}/api/pets`;
     const method = activePetItemId ? "PUT" : "POST";
     if (activePetItemId) {
       bodyData.id = activePetItemId;
@@ -97,7 +98,7 @@ const ProfilePet = (props) => {
 
   const handleDeletePet = async (petId) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/pets/${petId}`, {
+      const res = await fetch(`${API_URL}/api/pets/${petId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${jwt}` },
       });

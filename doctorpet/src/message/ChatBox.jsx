@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "remixicon/fonts/remixicon.css";
 import "./css/ChatBox.css";
+import { API_URL } from "../config";
 
 const ChatBox = ({
   appointmentId,
@@ -44,7 +45,7 @@ const ChatBox = ({
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:8080/api/appointments/${appointmentId}/messages`,
+          `${API_URL}/api/appointments/${appointmentId}/messages`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -118,7 +119,7 @@ const ChatBox = ({
       if (appointmentId) {
         // Chat với vet về appointment (cần JWT)
         res = await fetch(
-          `http://localhost:8080/api/appointments/${appointmentId}/messages`,
+          `${API_URL}/api/appointments/${appointmentId}/messages`,
           {
             method: "POST",
             headers: {
@@ -139,7 +140,7 @@ const ChatBox = ({
         setMessages((prev) => [...prev, data]);
       } else {
         // Chatbot công khai (không cần JWT, ai cũng dùng được)
-        res = await fetch(`http://localhost:8080/api/chat/public/messages`, {
+        res = await fetch(`${API_URL}/api/chat/public/messages`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
