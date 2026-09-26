@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
-import "../css/AppointmentList.css";
 import { useNavigate } from "react-router-dom";
-import {
-  formatDateTime,
-  getBadgeClass,
-  getLocation,
-} from "../components/appointmentFormatter";
+import AppointmentCard from "../../components/AppointmentCard";
 import { API_URL } from "../../config";
 const AppointmentList = () => {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [eye, setEye] = useState(null);
 
   // Giả lập fetch API thật
   const fetchAppointments = async () => {
@@ -50,136 +44,40 @@ const AppointmentList = () => {
   };
 
   return (
-    <div className="main-content">
-      <div className="content-wrapper">
-        {loading ? (
-          <p>Đang tải dữ liệu...</p>
-        ) : appointments.length === 0 ? (
-          <p>Không có lịch nào.</p>
-        ) : (
-          appointments.map((app) => (
-            <div key={app.id} className="appointment-card">
-              <div className="card-header">
-                <div className="pet-info">
-                  <img
-                    className="pet-avatar"
-                    src={
-                      app.pet.imageUrl ||
-                      app.pet.image_url ||
-                      "/assets/meme.jpg"
-                    }
-                    alt={app.pet.name || "pet"}
-                    onError={(e) => {
-                      // Nếu ảnh lỗi, hiển thị ảnh mặc định
-                      if (e.target.src !== "/assets/meme.jpg") {
-                        e.target.src = "/assets/meme.jpg";
-                      }
-                    }}
-                  />
-                  <div>
-                    <h3 className="pet-name">{app.pet.name}</h3>
-                    <p className="pet-vet">
-                      với BS: {app.vet.lastName + " " + app.vet.firstName}
-                    </p>
-                  </div>
-                </div>
-                <div
-                  className={`appointmentType ${
-                    app.appointmentType === "EMERGENCY" ? "emergency" : ""
-                  }`}
-                >
-                  {app.appointmentType === "EMERGENCY"
-                    ? "KHẨN CẤP"
-                    : "Bình Thường"}
-                </div>
-              </div>
-
-              <div className="info-grid">
-                <div className="info-item">
-                  <i
-                    className="ri-calendar-line icon"
-                    style={{ color: "#2563eb" }}
-                  ></i>
-                  <span>
-                    <strong>Thời gian:</strong> {formatDateTime(app.timeStart)}
-                  </span>
-                </div>
-
-                <div className="info-item">
-                  <i
-                    className={`icon ${
-                      app.locationType === "AT_HOME"
-                        ? "ri-home-4-line"
-                        : app.locationType === "AT_CLINIC"
-                        ? "ri-hospital-line"
-                        : "ri-video-chat-line"
-                    }`}
-                  ></i>
-                  <span>
-                    <strong>Hình thức:</strong> {getLocation(app.locationType)}
-                  </span>
-                </div>
-
-                <div className="type">
-                  <i
-                    className="ri-stethoscope-line"
-                    style={{ color: "#0ea5e9" }}
-                  ></i>
-                  <strong> Loại khám: </strong> {""}
-                  {app.type === "CHECKUP"
-                    ? "Kiểm tra sức khỏe"
-                    : app.type === "VACCINE"
-                    ? "Tiêm chủng"
-                    : "Phẫu thuật"}
-                </div>
-              </div>
-
-              <div className="info-grid">
-                <div className="info-item">
-                  <i
-                    className="ri-file-text-line icon"
-                    style={{ color: "#6b7280" }}
-                  ></i>
-                  <span>
-                    <strong>Ghi chú:</strong> {app.notes || "Không có"}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <i className="ri-time-line icon-info text-orange-600"></i>
-                  <div>
-                    <strong>Trạng thái:</strong>{" "}
-                    {app.status === "PENDING"
-                      ? "Chờ duyệt"
-                      : app.status === "APPROVED"
-                      ? "Đã duyệt"
-                      : app.status === "REJECTED"
-                      ? "Từ chối"
-                      : "Đổi lịch"}
-                  </div>
-                </div>
-                <div className="info-item"></div>
-              </div>
-
-              <div className="detail-button-container">
-                <button
-                  className="btn-detail"
-                  onClick={() => onDetailClick(app)}
-                  onMouseEnter={() => setEye(app.id)}
-                  onMouseLeave={() => setEye(null)}
-                >
-                  <i
-                    className={
-                      eye === app.id ? "ri-eye-line" : "ri-eye-off-line"
-                    }
-                  ></i>
+    <>
+      <div className="page-head">
+        <div>
+          <h1>Lịch hẹn được giao</h1>
+          <p>Các ca khám bác sĩ đã phân công cho bạn. Mở chi tiết để xem hồ sơ thú cưng và thông tin chủ nuôi.</p>
+        </div>
+      </div>
+      {loading ? (
+        <p className="state-text">Đang tải lịch hẹn...</p>
+      ) : appointments.length === 0 ? (
+        <p className="state-text">Chưa có lịch hẹn nào được giao cho bạn.</p>
+      ) : (
+        <div className="appt-list">
+          {appointments.map((app) => (
+            <AppointmentCard
+              key={app.id}
+              pet={app.pet}
+              subtitle={`với BS. ${[app.vet?.lastName, app.vet?.firstName].filter(Boolean).join(" ") || app.vet?.name || ""}`}
+              timeStart={app.timeStart}
+              status={app.status}
+              appointmentType={app.appointmentType}
+              locationType={app.locationType}
+              type={app.type}
+              notes={app.notes}
+              actions={
+                <button className="btn btn-primary btn-detail" onClick={() => onDetailClick(app)}>
                   Xem chi tiết
                 </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
+              }
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

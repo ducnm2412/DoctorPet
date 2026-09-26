@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import "../css/Login.css";
+import { Link } from "react-router-dom";
+import AuthLayout from "../components/AuthLayout";
+import { getHomePathFor } from "../components/navigation";
 import { API_URL } from "../config";
 
 const Login = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setErrorMessage("");
+    setSubmitting(true);
 
     try {
       const response = await fetch(`${API_URL}/api/authenticate`, {
@@ -26,7 +30,7 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        setErrorMessage("Sai tài khoản hoặc mật khẩu!");
+        setErrorMessage("Tên đăng nhập hoặc mật khẩu chưa đúng. Kiểm tra lại rồi thử lần nữa.");
         return;
       }
 
@@ -41,65 +45,68 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify(account));
       localStorage.setItem("jwt", data.id_token);
 
-      const authorities = account.authorities || [];
-      console.log("AUTHORITIES:", authorities); // log kiểm tra
-
-      if (authorities.includes("ROLE_USER")) {
-        window.location.href = "/user";
-      } else if (authorities.includes("ROLE_DOCTOR")) {
-        window.location.href = "/vet";
-      } else if (authorities.includes("ROLE_ASSISTANT")) {
-        window.location.href = "/support";
-      } else {
-        window.location.href = "/";
-      }
+      window.location.href = getHomePathFor(account);
     } catch (error) {
       console.error(error);
-      setErrorMessage("Không thể kết nối server!");
+      setErrorMessage("Không kết nối được tới máy chủ. Vui lòng thử lại sau ít phút.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="login-body">
-      <div className="login-container">
-        <h2>Đăng Nhập</h2>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
-
-          <div className="form-group">
-            <label>Tài khoản (username)</label>
-            <input
-              type="text"
-              placeholder="Nhập username"
-              value={login}
-              onChange={(e) => setLogin(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Mật khẩu</label>
-            <input
-              type="password"
-              placeholder="Nhập mật khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn-login">
-            Đăng Nhập
-          </button>
-
-          <p className="register-link">
-            Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
+    <AuthLayout
+      title="Chào mừng trở lại"
+      subtitle="Đăng nhập để xem lịch hẹn, hồ sơ thú cưng và tin nhắn từ bác sĩ."
+      photo="/assets/hero-1.webp"
+      photoAlt="Một cô gái ôm chú chó golden và chú corgi"
+      aside="Bác sĩ đọc hồ sơ của bé trước khi bạn đến, nên buổi khám luôn nhẹ nhàng hơn."
+      footer={
+        <>
+          <span>
+            Chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+          </span>
+          <Link to="/">Về trang chủ</Link>
+        </>
+      }
+    >
+      <form className="auth-form" onSubmit={handleSubmit}>
+        {errorMessage && (
+          <p className="form-note is-error" role="alert">
+            {errorMessage}
           </p>
-          <a href="/">Trở về trang chủ</a>
-        </form>
-      </div>
-    </div>
+        )}
+
+        <div className="field">
+          <label htmlFor="login-username">Tên đăng nhập</label>
+          <input
+            id="login-username"
+            type="text"
+            autoComplete="username"
+            placeholder="Ví dụ: lan.nguyen"
+            value={login}
+            onChange={(e) => setLogin(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="field">
+          <label htmlFor="login-password">Mật khẩu</label>
+          <input
+            id="login-password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary" disabled={submitting}>
+          {submitting ? "Đang đăng nhập..." : "Đăng nhập"}
+        </button>
+      </form>
+    </AuthLayout>
   );
 };
 

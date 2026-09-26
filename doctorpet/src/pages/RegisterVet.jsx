@@ -1,19 +1,23 @@
 import React, { useState } from "react";
-import "../css/Register.css";
+import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import AuthLayout from "../components/AuthLayout";
 import { API_URL } from "../config";
 
+const emptyForm = {
+  login: "",
+  password: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  langKey: "vi",
+  licenseNumber: "",
+  specialization: "",
+};
+
 const RegisterVet = () => {
-  const [formData, setFormData] = useState({
-    login: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    langKey: "vi",
-    licenseNumber: "",
-    specialization: "",
-  });
+  const [formData, setFormData] = useState(emptyForm);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,6 +28,7 @@ const RegisterVet = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const res = await fetch(`${API_URL}/api/register-vet`, {
         method: "POST",
@@ -36,141 +41,154 @@ const RegisterVet = () => {
       if (res.status === 201) {
         Swal.fire({
           icon: "success",
-          title: "Thành công!",
-          text: "Đăng ký bác sĩ thành công!",
-          confirmButtonText: "OK",
+          title: "Đã tạo tài khoản bác sĩ",
+          text: "Bạn có thể đăng nhập để bắt đầu nhận lịch hẹn.",
+          confirmButtonText: "Đăng nhập",
+        }).then((result) => {
+          if (result.isConfirmed) window.location.href = "/login";
         });
-        setFormData({
-          login: "",
-          password: "",
-          firstName: "",
-          lastName: "",
-          email: "",
-          langKey: "vi",
-          licenseNumber: "",
-          specialization: "",
-        });
+        setFormData(emptyForm);
       } else {
-        let errMsg = "Đăng ký thất bại — kiểm tra dữ liệu đầu vào.";
+        let errMsg = "Chưa tạo được tài khoản. Kiểm tra lại thông tin rồi thử lần nữa.";
         try {
           const data = await res.json();
           if (data.message) errMsg = data.message;
         } catch {
-          errMsg = "Đăng ký thất bại — kiểm tra dữ liệu đầu vào.";
+          // giữ thông báo mặc định
         }
         Swal.fire({
           icon: "error",
-          title: "Lỗi!",
+          title: "Chưa đăng ký được",
           text: errMsg,
-          confirmButtonText: "OK",
+          confirmButtonText: "Sửa thông tin",
         });
       }
     } catch (error) {
       console.error(error);
       Swal.fire({
         icon: "error",
-        title: "Lỗi!",
-        text: "Lỗi kết nối đến server!",
-        confirmButtonText: "OK",
+        title: "Không kết nối được",
+        text: "Máy chủ chưa phản hồi. Vui lòng thử lại sau ít phút.",
+        confirmButtonText: "Đóng",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className="register-body">
-      <div className="register-container">
-        <h2>Đăng Ký Bác Sĩ</h2>
-        <form className="register-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Họ</label>
+    <AuthLayout
+      title="Đăng ký tài khoản bác sĩ"
+      subtitle="Nhận lịch hẹn, trao đổi với chủ nuôi và phân công trợ lý ở cùng một nơi."
+      photo="/assets/hero-2.webp"
+      photoAlt="Chú chó đen quàng khăn xanh đang được xoa đầu"
+      aside="Lịch làm việc gọn gàng, để bạn dành thời gian cho các bé nhiều hơn."
+      footer={
+        <>
+          <span>
+            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+          </span>
+          <Link to="/">Về trang chủ</Link>
+        </>
+      }
+    >
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor="vet-last">Họ</label>
             <input
+              id="vet-last"
               type="text"
               name="lastName"
-              placeholder="Họ"
+              autoComplete="family-name"
               value={formData.lastName}
               onChange={handleChange}
             />
           </div>
-          <div className="form-group">
-            <label>Tên</label>
+          <div className="field">
+            <label htmlFor="vet-first">Tên</label>
             <input
+              id="vet-first"
               type="text"
               name="firstName"
-              placeholder="Tên"
+              autoComplete="given-name"
               value={formData.firstName}
               onChange={handleChange}
             />
           </div>
-          <div className="form-group">
-            <label>Tên đăng nhập</label>
+        </div>
+        <div className="field">
+          <label htmlFor="vet-login">Tên đăng nhập</label>
+          <input
+            id="vet-login"
+            type="text"
+            name="login"
+            autoComplete="username"
+            value={formData.login}
+            onChange={handleChange}
+            required
+            pattern="^[_.@A-Za-z0-9-]+$"
+            title="Tên đăng nhập chỉ chứa chữ, số, dấu _ . @ -"
+          />
+          <span className="field-hint">Chỉ dùng chữ không dấu, số và các ký tự _ . @ -</span>
+        </div>
+        <div className="field">
+          <label htmlFor="vet-email">Email</label>
+          <input
+            id="vet-email"
+            type="email"
+            name="email"
+            autoComplete="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="vet-password">Mật khẩu</label>
+          <input
+            id="vet-password"
+            type="password"
+            name="password"
+            autoComplete="new-password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            minLength={4}
+            maxLength={100}
+          />
+          <span className="field-hint">Từ 4 đến 100 ký tự.</span>
+        </div>
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor="vet-license">Số giấy phép hành nghề</label>
             <input
-              type="text"
-              name="login"
-              placeholder="Tên đăng nhập"
-              value={formData.login}
-              onChange={handleChange}
-              required
-              pattern="^[_.@A-Za-z0-9-]+$"
-              title="Tên đăng nhập chỉ chứa chữ, số, dấu _ . @ -"
-            />
-          </div>
-          <div className="form-group">
-            <label>Mật khẩu</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Mật khẩu (4-100 ký tự)"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              minLength={4}
-              maxLength={100}
-            />
-          </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Số giấy phép hành nghề</label>
-            <input
+              id="vet-license"
               type="text"
               name="licenseNumber"
-              placeholder="Số giấy phép hành nghề"
               value={formData.licenseNumber}
               onChange={handleChange}
               required
             />
           </div>
-          <div className="form-group">
-            <label>Chuyên môn</label>
+          <div className="field">
+            <label htmlFor="vet-spec">Chuyên môn</label>
             <input
+              id="vet-spec"
               type="text"
               name="specialization"
-              placeholder="Chuyên môn"
+              placeholder="Ví dụ: Nội khoa"
               value={formData.specialization}
               onChange={handleChange}
             />
           </div>
+        </div>
 
-          <button type="submit" className="btn-register">
-            Đăng Ký
-          </button>
-
-          <p className="login-link">
-            Đã có tài khoản? <a href="/login">Đăng nhập</a>
-          </p>
-          <a href="/">Trở về trang chủ</a>
-        </form>
-      </div>
-    </div>
+        <button type="submit" className="btn btn-primary" disabled={submitting}>
+          {submitting ? "Đang đăng ký..." : "Đăng ký làm bác sĩ"}
+        </button>
+      </form>
+    </AuthLayout>
   );
 };
 

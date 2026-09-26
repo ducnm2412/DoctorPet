@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import ScheduleItem from "../components/ScheduleItem";
-import "../css/Schedule.css";
 import { API_URL } from "../../config";
 
 const Schedule = () => {
@@ -73,24 +72,20 @@ const Schedule = () => {
   // -----------------------
   if (isLoading) {
     return (
-      <div className="schedule">
-        <p style={{ color: "#007bff", marginTop: "20px" }}>Đang tải danh sách lịch hẹn...</p>
-      </div>
+      <p className="state-text">Đang tải lịch hẹn của bạn...</p>
     );
   }
 
   if (error) {
     return (
-      <div className="schedule">
-        <p style={{ color: "red", marginTop: "20px" }}>❌ Lỗi: {error}</p>
-      </div>
+      <p className="state-text is-error">{error}</p>
     );
   }
 
   return (
     <div className="schedule">
       {/* Nút lọc trạng thái */}
-      <div className="filter-buttons" style={{ marginBottom: "15px" }}>
+      <div className="filter-buttons" role="group" aria-label="Lọc theo trạng thái">
         <button
           className={statusFilter === "ALL" ? "active" : ""}
           onClick={() => handleFilter("ALL")}
@@ -119,17 +114,23 @@ const Schedule = () => {
           className={statusFilter === "RESCHEDULED" ? "active" : ""}
           onClick={() => handleFilter("RESCHEDULED")}
         >
-          Đổi lịch
+          Đã đổi lịch
         </button>
       </div>
 
       {/* Danh sách lịch hẹn */}
       {filteredAppointments.length === 0 ? (
-        <p style={{ color: "gray" }}>Không có lịch hẹn phù hợp.</p>
+        <p className="state-text">
+          {statusFilter === "ALL"
+            ? "Bạn chưa đặt lịch nào. Vào mục Đặt lịch khám để tạo lịch đầu tiên."
+            : "Không có lịch hẹn nào ở trạng thái này."}
+        </p>
       ) : (
-        filteredAppointments.map((item) => (
-          <ScheduleItem key={item.id} {...item} />
-        ))
+        <div className="appt-list">
+          {filteredAppointments.map((item) => (
+            <ScheduleItem key={item.id} {...item} />
+          ))}
+        </div>
       )}
     </div>
   );

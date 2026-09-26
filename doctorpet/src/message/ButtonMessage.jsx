@@ -1,5 +1,4 @@
 import React from "react";
-import "remixicon/fonts/remixicon.css";
 import "./css/ButtonMessage.css";
 
 const ButtonMessage = ({

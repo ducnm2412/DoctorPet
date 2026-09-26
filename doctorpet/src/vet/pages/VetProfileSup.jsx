@@ -4,6 +4,7 @@ import SupItem from "../components/SupItem";
 import "../css/VetProfileSup.css";
 import Swal from "sweetalert2";
 import { API_URL } from "../../config";
+import { formatDateTime, statusLabel } from "../../components/appointmentLabels";
 const VetProfileSup = () => {
   const [assistants, setAssistants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,14 +56,13 @@ const VetProfileSup = () => {
 
 const handleDelete = async (assistantId) => {
   const result = await Swal.fire({
-    title: "Xác nhận xóa",
-    text: "Bạn có chắc muốn xóa trợ lý này?",
+    title: "Xóa trợ lý này?",
+    text: "Trợ lý sẽ không đăng nhập được nữa và không còn nhận lịch mới.",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Xóa",
-    cancelButtonText: "Hủy",
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Xóa trợ lý",
+    cancelButtonText: "Giữ lại",
+    confirmButtonColor: "#9b3b34",
   });
 
   // ❌ Người dùng bấm Hủy
@@ -97,7 +97,7 @@ const handleDelete = async (assistantId) => {
     Swal.fire({
       icon: "success",
       title: "Đã xóa!",
-      text: "Trợ lý đã được xóa thành công.",
+      text: "Tài khoản trợ lý đã được xóa.",
       timer: 1500,
       showConfirmButton: false,
     });
@@ -134,7 +134,7 @@ const handleDelete = async (assistantId) => {
       console.log("Lịch của assistant:", data);
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      Swal.fire({ icon: "error", title: "Chưa tải được lịch", text: err.message });
       setAssistantAppointments([]);
     } finally {
       setLoadingAppointments(false);
@@ -149,25 +149,37 @@ const handleDelete = async (assistantId) => {
     fetchAssistants();
   };
 
+  const selectedAssistant = assistants.find(
+    (a) => (a.assistantId || a.assistant_id || a.id) === selectedAssistantId
+  );
+
   return (
     <div className="vet-profile-sup-container">
-      <button className="btn-add" onClick={handleAddNew}>
-        Thêm trợ lý
-      </button>
+      <div className="assistants-toolbar">
+        <p className="muted">
+          {loading ? "Đang tải danh sách..." : `${assistants.length} trợ lý`}
+        </p>
+        <button className="btn btn-primary btn-add" onClick={handleAddNew}>
+          <i className="ri-user-add-line" aria-hidden="true"></i>
+          Thêm trợ lý
+        </button>
+      </div>
 
-      {loading && <p>Đang tải...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="form-note is-error">{error}</p>}
 
       {/* Danh sách trợ lý */}
       <div className="assistant-list">
-        {assistants.length === 0 && !loading && (
-          <p>Không có trợ lý nào.</p>
+        {assistants.length === 0 && !loading && !error && (
+          <p className="state-text">
+            Bạn chưa có trợ lý nào. Tạo tài khoản để phân công trợ lý hỗ trợ các ca khám.
+          </p>
         )}
 
         {assistants.map((a) => (
           <SupItem
             key={a.id}
             assistant={a}
+            isSelected={(a.assistantId || a.assistant_id || a.id) === selectedAssistantId}
             onEdit={handleEdit}
             onDelete={() => handleDelete(a.id)}
             onViewSchedule={handleViewSchedule}
@@ -184,39 +196,46 @@ const handleDelete = async (assistantId) => {
         />
       )}
 
-      {/* Hiển thị lịch của assistant */}
+      {/* Lịch của trợ lý được chọn */}
       {selectedAssistantId && (
-        <div className="assistant-schedule-section" style={{ marginTop: "20px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <h3>Lịch của trợ lý</h3>
-            <button onClick={() => {
-              setSelectedAssistantId(null);
-              setAssistantAppointments([]);
-            }}>Đóng</button>
+        <section className="assistant-schedule-section" aria-live="polite">
+          <div className="assistant-schedule-head">
+            <h3>
+              Lịch của{" "}
+              {selectedAssistant
+                ? `${selectedAssistant.firstName} ${selectedAssistant.lastName}`
+                : "trợ lý"}
+            </h3>
+            <button
+              className="btn btn-quiet"
+              onClick={() => {
+                setSelectedAssistantId(null);
+                setAssistantAppointments([]);
+              }}
+            >
+              Đóng
+            </button>
           </div>
-          
+
           {loadingAppointments ? (
-            <p>Đang tải lịch...</p>
+            <p className="state-text">Đang tải lịch...</p>
           ) : assistantAppointments.length === 0 ? (
-            <p>Không có lịch hẹn nào.</p>
+            <p className="state-text">Trợ lý này chưa được phân công lịch nào.</p>
           ) : (
-            <div className="appointments-list">
+            <ul className="assistant-schedule-list">
               {assistantAppointments.map((appt) => (
-                <div key={appt.id} style={{ 
-                  border: "1px solid #ddd", 
-                  padding: "10px", 
-                  marginBottom: "10px",
-                  borderRadius: "5px"
-                }}>
-                  <p><strong>Thú cưng:</strong> {appt.pet?.name}</p>
-                  <p><strong>Thời gian:</strong> {new Date(appt.timeStart).toLocaleString("vi-VN")}</p>
-                  <p><strong>Trạng thái:</strong> {appt.status}</p>
-                  <p><strong>Loại:</strong> {appt.appointmentType}</p>
-                </div>
+                <li key={appt.id}>
+                  <span className="assistant-schedule-time">{formatDateTime(appt.timeStart)}</span>
+                  <span className="assistant-schedule-pet">{appt.pet?.name}</span>
+                  {appt.appointmentType === "EMERGENCY" && (
+                    <span className="badge badge-EMERGENCY">Khẩn cấp</span>
+                  )}
+                  <span className={`badge badge-${appt.status}`}>{statusLabel(appt.status)}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
-        </div>
+        </section>
       )}
     </div>
   );

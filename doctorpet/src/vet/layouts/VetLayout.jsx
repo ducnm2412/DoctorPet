@@ -1,14 +1,37 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import "remixicon/fonts/remixicon.css";
+import "../../css/Dashboard.css";
 
 import VetSchedule from "../pages/VetSchedule";
 import VetAppointment from "../pages/VetAppointment";
 import VetProfileSup from "../pages/VetProfileSup";
 import { API_URL } from "../../config";
 
+// Các mục trong khu vực bác sĩ
+const PAGES = {
+  appointment: {
+    label: "Lịch cần duyệt",
+    icon: "ri-inbox-2-line",
+    title: "Lịch cần duyệt",
+    description: "Các yêu cầu khám mới đang chờ bạn duyệt, đổi lịch hoặc từ chối.",
+  },
+  schedule: {
+    label: "Lịch làm việc",
+    icon: "ri-calendar-2-line",
+    title: "Lịch làm việc",
+    description: "Những lịch hẹn bạn đã xử lý, xem theo ngày hoặc theo trạng thái.",
+  },
+  profile: {
+    label: "Trợ lý của tôi",
+    icon: "ri-team-line",
+    title: "Trợ lý của tôi",
+    description: "Tạo tài khoản cho trợ lý và xem lịch được phân công cho từng người.",
+  },
+};
+
 const VetLayout = () => {
   const [active, setActive] = useState("appointment");
+  const [showDetails, setShowDetails] = useState(false);
 
   // Thông tin bác sĩ thú y
   const [vetInfo, setVetInfo] = useState({
@@ -69,68 +92,66 @@ const VetLayout = () => {
       }));
     }
   }, [vetInfo.user_id, vets]);
+  const page = PAGES[active];
   return (
     <>
       <Header />
       <div className="dashboard-container">
         {/* Sidebar */}
-        <div className="sidebar">
-          <div className="profile-section">
-            <img
-              className="avatar"
-              src="/assets/doc1.jpg" // đường dẫn public đúng
-              alt="avatar"
-            />
-
-            <input
-              type="text"
-              className="info-input"
-              value={vetInfo.name}
-              readOnly
-            />
-
-            <input
-              type="text"
-              className="info-input"
-              value={vetInfo.specialization}
-              readOnly
-            />
-
-            <input
-              type="text"
-              className="info-input"
-              value={vetInfo.license_no}
-              readOnly
-            />
+        <aside className="sidebar">
+          <div className={`profile-card ${showDetails ? "is-expanded" : ""}`}>
+            <div className="profile-head">
+              <img className="avatar" src="/assets/doc1.webp" alt="" />
+              <div>
+                <p className="profile-name">{vetInfo.name || "Bác sĩ"}</p>
+                <p className="profile-role">Bác sĩ thú y</p>
+                <button
+                  type="button"
+                  className="profile-toggle"
+                  aria-expanded={showDetails}
+                  onClick={() => setShowDetails(!showDetails)}
+                >
+                  {showDetails ? "Thu gọn" : "Xem hồ sơ"}
+                  <i className={showDetails ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"} aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div className="profile-fields">
+              <div className="profile-field">
+                <span>Chuyên môn</span>
+                <p className="info-value">{vetInfo.specialization || "Chưa cập nhật"}</p>
+              </div>
+              <div className="profile-field">
+                <span>Số giấy phép</span>
+                <p className="info-value">{vetInfo.license_no || "Chưa cập nhật"}</p>
+              </div>
+            </div>
           </div>
 
           {/* Menu */}
-          <div className="menu-section">
-            <button
-              className={`menu-btn ${active === "appointment" ? "active" : ""}`}
-              onClick={() => setActive("appointment")}
-            >
-              Lịch khám cần duyệt
-            </button>
-
-            <button
-              className={`menu-btn ${active === "schedule" ? "active" : ""}`}
-              onClick={() => setActive("schedule")}
-            >
-              Lịch làm việc
-            </button>
-
-            <button
-              className={`menu-btn ${active === "profile" ? "active" : ""}`}
-              onClick={() => setActive("profile")}
-            >
-              Tài khoản trợ lí
-            </button>
-          </div>
-        </div>
+          <nav className="menu-section" aria-label="Mục">
+            {Object.entries(PAGES).map(([key, item]) => (
+              <button
+                key={key}
+                className={`menu-btn ${active === key ? "active" : ""}`}
+                aria-current={active === key ? "page" : undefined}
+                onClick={() => setActive(key)}
+              >
+                <i className={item.icon} aria-hidden="true"></i>
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
 
         {/* Main content */}
-        <div className="main-content">
+        <main className="main-content">
+          <div className="page-head">
+            <div>
+              <h1>{page.title}</h1>
+              <p>{page.description}</p>
+            </div>
+          </div>
           {active === "appointment" && (
             <VetAppointment vetId={vetInfo.id} nameVet={vetInfo.name} />
           )}
@@ -140,7 +161,7 @@ const VetLayout = () => {
           {active === "profile" && (
             <VetProfileSup vetId={vetInfo.id} nameVet={vetInfo.name} />
           )}
-        </div>
+        </main>
       </div>
     </>
   );

@@ -116,26 +116,26 @@ const ProfilePet = (props) => {
 
   return (
     <>
-      <div className="main-item">
-        {pets.map(
-          (
-            pet
-          ) => (
-            <PetItem
-              key={pet.id}
-              {...pet}
-              handleShowSidebarPetID={handleShowSidebarPetID}
-              handleDeletePet={handleDeletePet}
-            />
-          )
-        )}
-        <div>
-          <div className="add-item" onClick={handleShowSidebarPet}>
-            <div className="add-item-icon">
-              <i className="ri-add-line"></i>
-            </div>
-          </div>
-        </div>
+      <div className="pet-grid">
+        {pets.map((pet) => (
+          <PetItem
+            key={pet.id}
+            {...pet}
+            handleShowSidebarPetID={handleShowSidebarPetID}
+            handleDeletePet={handleDeletePet}
+          />
+        ))}
+        <button type="button" className="add-item" onClick={handleShowSidebarPet}>
+          <span className="add-item-icon" aria-hidden="true">
+            <i className="ri-add-line"></i>
+          </span>
+          <span className="add-item-title">Thêm thú cưng</span>
+          <span className="add-item-text">
+            {pets.length === 0
+              ? "Tạo hồ sơ đầu tiên để bắt đầu đặt lịch khám."
+              : "Mỗi bé một hồ sơ riêng."}
+          </span>
+        </button>
       </div>
       {showSidebarPet && (
         <SiderbarPet

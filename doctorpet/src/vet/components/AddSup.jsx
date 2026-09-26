@@ -54,70 +54,115 @@ const AddSup = (props) => {
     if (res.ok) {
       Swal.fire({
         title: props.assistant
-          ? "Cập nhật thành công!"
-          : "Thêm trợ lý thành công!",
+          ? "Đã lưu thông tin trợ lý"
+          : "Đã tạo tài khoản trợ lý",
         icon: "success",
       });
       props.onCreated?.();
     } else {
-      Swal.fire({ title: "Lỗi!", icon: "error" });
+      Swal.fire({
+        title: "Chưa lưu được",
+        text: "Tên đăng nhập hoặc email có thể đã được dùng. Kiểm tra lại rồi thử lần nữa.",
+        icon: "error",
+      });
     }
   };
 
+  const isEditing = Boolean(props.assistant);
+
   return (
-    <div className="main-container">
-      <div className="add-sup-container">
-        <h2>Thêm Trợ Lý</h2>
+    <div
+      className="main-container"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) props.onCancel?.();
+      }}
+    >
+      <div
+        className="add-sup-container"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-sup-title"
+      >
+        <div className="add-sup-head">
+          <h2 id="add-sup-title">{isEditing ? "Sửa thông tin trợ lý" : "Thêm trợ lý"}</h2>
+          <button type="button" className="add-sup-close" onClick={props.onCancel} aria-label="Đóng">
+            <i className="ri-close-line" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p className="add-sup-intro">
+          {isEditing
+            ? "Cập nhật thông tin đăng nhập của trợ lý."
+            : "Trợ lý dùng tài khoản này để đăng nhập và xem các ca khám được giao."}
+        </p>
 
         <form onSubmit={handleSubmit} className="sup-form">
           <div className="name-row">
+            <div className="field">
+              <label htmlFor="sup-first">Họ</label>
+              <input
+                id="sup-first"
+                type="text"
+                name="firstName"
+                value={form.firstName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="sup-last">Tên</label>
+              <input
+                id="sup-last"
+                type="text"
+                name="lastName"
+                value={form.lastName}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="field">
+            <label htmlFor="sup-email">Email</label>
             <input
-              type="text"
-              name="firstName"
-              placeholder="Họ"
-              value={form.firstName}
+              id="sup-email"
+              type="email"
+              name="email"
+              value={form.email}
               onChange={handleChange}
               required
             />
+          </div>
+          <div className="field">
+            <label htmlFor="sup-login">Tên đăng nhập</label>
             <input
+              id="sup-login"
               type="text"
-              name="lastName"
-              placeholder="Tên"
-              value={form.lastName}
+              name="login"
+              value={form.login}
               onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="sup-password">{isEditing ? "Mật khẩu mới" : "Mật khẩu"}</label>
+            <input
+              id="sup-password"
+              type="password"
+              name="password"
+              autoComplete="new-password"
+              value={form.password}
+              onChange={handleChange}
+              required
             />
           </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="login"
-            placeholder="Tên đăng nhập"
-            value={form.login}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Mật khẩu"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-
-          <button type="submit">{props.assistant ? "Cập nhật" : "Thêm"}</button>
-          <button type="button" onClick={props.onCancel}>
-            Hủy
-          </button>
+          <div className="button-group">
+            <button type="button" className="btn btn-quiet" onClick={props.onCancel}>
+              Hủy
+            </button>
+            <button type="submit" className="btn btn-primary">
+              {isEditing ? "Lưu thay đổi" : "Tạo tài khoản trợ lý"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

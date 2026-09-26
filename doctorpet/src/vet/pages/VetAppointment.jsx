@@ -33,7 +33,7 @@ const VetAppointment = (props) => {
   }, [jwt, props.vetId]);
   const [detailId, setDetailId] = useState(null);
   return (
-    <div className="appointments-list" style={{ width: "100%" }}>
+    <div className="appointments-list">
       {detailId ? (
         <DetailAppointment
           appointmentId={detailId}
@@ -44,7 +44,10 @@ const VetAppointment = (props) => {
           }}
         />
       ) : (
-        <div>
+        <div className="appt-list">
+          {appointments.length === 0 && (
+            <p className="state-text">Không có yêu cầu nào đang chờ duyệt. Lịch mới sẽ hiện ở đây.</p>
+          )}
           {appointments.map((item) => (
             <ScheduleItem
               key={item.id}

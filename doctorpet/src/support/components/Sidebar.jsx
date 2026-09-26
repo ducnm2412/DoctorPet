@@ -1,61 +1,68 @@
-
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [showDetails, setShowDetails] = useState(false);
     const [user, setUserInfo] = useState({
         name: "",
-        address: "",
-        phone: "",
-        id: "",
-        user_id: ""
+        email: "",
     });
 
     useEffect(() => {
-        //const storedUser = localStorage.getItem("user");
-        // 1. Lấy thông tin user từ localStorage
+        // Lấy thông tin user từ localStorage
         const savedUser = localStorage.getItem("user");
-        // Lấy JWT từ localStorage (không dùng ở đây nhưng cần cho hàm updateOwner)
         if (savedUser) {
             const user = JSON.parse(savedUser);
-
-            // Lưu id của user làm ownerId
-            const userId = user.id;
-
             setUserInfo({
                 name: `${user.firstName} ${user.lastName}`,
-                address: "", // sẽ fetch sau từ API
-                phone: "", // sẽ fetch sau từ API
-                id: userId, // set ownerId = id
-                user_id: userId,
-                email: `${user.email}`,
-                authority: `${user.authorities}`,
+                email: user.email || "",
             });
         }
     }, []);
 
-    return (
-        <div className="dashboard-containe">
-            <div className="sidebar">
-                <div className="profile-section">
-                    <img className="avatar" src="../public/assets/doc3.jpg"
-              alt="avatar"/>
-                    <input type="text" value={user.name} readOnly className="info-input" />
-                    <input type="text" value={user.email} readOnly className="info-input" />
-                    <input type="text" value=" Trợ lý "readOnly className="info-input" />
-                </div>
+    const isListPage = location.pathname.replace(/\/$/, "") === "/support";
 
-                <div className="menu-section">
-                    <button className="menu-btn"
-                        onClick={() => navigate("/support")}>
-                        Danh sách lịch hẹn
-                    </button>
+    return (
+        <aside className="sidebar">
+            <div className={`profile-card ${showDetails ? "is-expanded" : ""}`}>
+                <div className="profile-head">
+                    <img className="avatar" src="/assets/person-placeholder.svg" alt="" />
+                    <div>
+                        <p className="profile-name">{user.name || "Trợ lý"}</p>
+                        <p className="profile-role">Trợ lý bác sĩ</p>
+                        <button
+                            type="button"
+                            className="profile-toggle"
+                            aria-expanded={showDetails}
+                            onClick={() => setShowDetails(!showDetails)}
+                        >
+                            {showDetails ? "Thu gọn" : "Xem hồ sơ"}
+                            <i className={showDetails ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"} aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div className="profile-fields">
+                    <div className="profile-field">
+                        <span>Email</span>
+                        <p className="info-value">{user.email || "Chưa cập nhật"}</p>
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <nav className="menu-section" aria-label="Mục">
+                <button
+                    className={`menu-btn ${isListPage ? "active" : ""}`}
+                    aria-current={isListPage ? "page" : undefined}
+                    onClick={() => navigate("/support")}
+                >
+                    <i className="ri-list-check-3" aria-hidden="true"></i>
+                    Lịch hẹn được giao
+                </button>
+            </nav>
+        </aside>
     );
 };
 
 export default Sidebar;
-

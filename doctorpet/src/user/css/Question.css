@@ -1,47 +1,52 @@
 .question-main {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  max-width: 760px;
 }
+
 .add-item-question {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background: white;
-  transition: 0.2s ease;
+  padding: 14px;
+  border: 1.5px dashed #bcd3cd;
+  border-radius: var(--r-card);
+  color: var(--lagoon);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
+
+.add-item-question:hover {
+  background: var(--paper);
+  border-color: var(--lagoon);
+}
+
 .add-item-question.close {
   display: none;
 }
-.add-item-question .icon-add-question {
-  font-size: 50px;
-  border-radius: 50%;
-  border: 2px dashed #ccc;
-  color: #ccc;
+
+.icon-add-question {
+  font-size: 1.5rem;
 }
-.add-item-question .icon-add-question:hover {
-  border: 2px dashed #000;
-  color: #000;
-}
+
 .form-add-question {
-  padding: 10px;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px #f7e5b2;
-  border: 1px solid #ff914d;
-  transition: box-shadow 0.4s ease;
-  width: 100%; 
+  padding: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
 }
+
 .form-add-question .form-input {
-  width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
+
+.form-add-question textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
 .btn-add-question {
-  margin: 0;
-  background: linear-gradient(90deg, #ed8a43, #ffbb00);
-  margin-top: 10px;
-}
-.btn-add-question:hover {
-  background: #3b74d9;
+  align-self: flex-end;
 }

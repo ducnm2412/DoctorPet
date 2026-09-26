@@ -40,8 +40,8 @@ const VetSchedule = ({ vetId, nameVet }) => {
     fetchAppointments();
   }, [jwt, vetId]);
 
-  if (loading) return <div>Đang tải lịch làm việc...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
+  if (loading) return <p className="state-text">Đang tải lịch làm việc...</p>;
+  if (error) return <p className="state-text is-error">{error}. Hãy tải lại trang để thử lần nữa.</p>;
 
   // Filter theo tab
   function isSameDay(date1, date2) {
@@ -71,10 +71,10 @@ const VetSchedule = ({ vetId, nameVet }) => {
     return false;
   });
   return (
-    <div style={{ width: "100%" }}>
+    <div>
       {/* NAV / Tabs */}
       {!detailId && (
-        <div>
+        <div className="tab-bar" role="group" aria-label="Lọc lịch làm việc">
           <button
             className={`btn-tab ${activeTab === "TODAY" ? "active" : ""}`}
             onClick={() => setActiveTab("TODAY")}
@@ -108,12 +108,10 @@ const VetSchedule = ({ vetId, nameVet }) => {
           {activeTab === "DATE" && (
             <input
               type="date"
+              className="input"
+              aria-label="Chọn ngày"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              style={{
-                marginLeft: "10px",
-                padding: "5px",
-              }}
             />
           )}
         </div>
@@ -133,9 +131,13 @@ const VetSchedule = ({ vetId, nameVet }) => {
           }}
         />
       ) : (
-        <div>
+        <div className="appt-list">
           {filteredAppointments.length === 0 ? (
-            <div>Không có lịch hẹn nào trong mục này.</div>
+            <p className="state-text">
+              {activeTab === "DATE" && !selectedDate
+                ? "Chọn một ngày để xem lịch."
+                : "Không có lịch hẹn nào trong mục này."}
+            </p>
           ) : (
             filteredAppointments.map((item) => (
               <ScheduleItem

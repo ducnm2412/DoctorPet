@@ -1,0 +1,195 @@
+.appt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appt-card {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  transition: border-color 0.25s var(--ease);
+}
+
+.appt-card:hover {
+  border-color: #bfd6d0;
+}
+
+/* Ô ngày giờ bên trái */
+.appt-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 18px 8px;
+  background: var(--seaglass-soft);
+  border-right: 1px solid var(--line);
+  text-align: center;
+}
+
+.appt-card.is-emergency .appt-date {
+  background: #fbeeec;
+  border-right-color: var(--rejected-bg);
+}
+
+.appt-weekday {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+}
+
+.appt-day {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "opsz" 144;
+  font-size: 2.25rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.appt-month {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+}
+
+.appt-time {
+  margin-top: 8px;
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: var(--text-sm);
+  font-weight: 450;
+  color: var(--lagoon-deep);
+}
+
+/* Nội dung */
+.appt-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.appt-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.appt-pet-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--seaglass);
+}
+
+.appt-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.appt-title h3 {
+  font-size: var(--text-lg);
+  font-weight: 500;
+}
+
+.appt-title p {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.appt-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.appt-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  list-style: none;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.appt-meta li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.appt-meta i {
+  font-size: 1rem;
+  color: var(--lagoon);
+}
+
+.appt-notes {
+  max-width: 70ch;
+  padding: 10px 14px;
+  border-radius: var(--r-field);
+  background: var(--mist);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
+.appt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.appt-actions .btn {
+  min-height: 40px;
+  padding: 0 18px;
+}
+
+@media (max-width: 640px) {
+  .appt-card {
+    grid-template-columns: 1fr;
+  }
+
+  .appt-date {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 10px 16px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .appt-card.is-emergency .appt-date {
+    border-bottom-color: var(--rejected-bg);
+  }
+
+  .appt-day {
+    font-size: var(--text-lg);
+  }
+
+  .appt-time {
+    margin: 0 0 0 auto;
+  }
+
+  .appt-top {
+    flex-wrap: wrap;
+  }
+
+  .appt-badges {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .appt-actions {
+    justify-content: stretch;
+  }
+
+  .appt-actions > * {
+    flex: 1;
+  }
+}

@@ -1,21 +1,18 @@
 import React from "react";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import Sidebar from "../components/Sidebar";
 import { Outlet } from "react-router-dom";
+import "../../css/Dashboard.css";
 
 const SupportLayout = () => {
-
-
     return (
         <>
             <Header />
-            {/* <Sidebar />
-            <Outlet /> */}
-
             <div className="dashboard-container">
                 <Sidebar />
-                <Outlet />
+                <main className="main-content">
+                    <Outlet />
+                </main>
             </div>
         </>
     );

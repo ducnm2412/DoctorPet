@@ -1,73 +1,123 @@
-/* Appointment.css */
 .form-appointment {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #ff914d;
-  box-shadow: 0 4px 12px rgba(255, 145, 77, 0.3);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-family: sans-serif;
-  width: 600px;
-  margin: auto;
-  height: fit-content;
-}
-form .row-1{
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: space-between;
-    align-items: center;
-}
-form .row-1 .column-1 {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-form label {
-  font-size: 14px;
-  font-weight: 600;
+  gap: 16px;
+  max-width: 760px;
 }
 
-form input,
-form select,
-form textarea {
-  padding: 8px 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  outline: none;
-  transition: 0.2s;
+.booking-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 22px 24px 24px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
 }
 
-form input:focus,
-form select:focus,
-form textarea:focus {
-  border-color: #ff914d;
+.booking-section legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 2px;
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-lg);
 }
 
-textarea {
-  min-height: 80px;
-  resize: vertical;
+.booking-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.btn-appointment {
-  padding: 10px;
-  background: linear-gradient(90deg, #ed8a43, #ffbb00);
-  color: white;
-  font-size: 15px;
-  border: none;
-  border-radius: 6px;
+.field-hint {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+}
+
+/* Lựa chọn dạng viên thuốc (radio) */
+.choice-group {
+  display: flex;
+  gap: 8px;
+}
+
+.choice {
+  position: relative;
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-field);
+  background: var(--paper);
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
   cursor: pointer;
-  transition: 0.2s;
-  margin: 0 !important;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease),
+    color 0.2s var(--ease);
 }
 
-.btn-appointment:hover {
-  background: #3b74d9;
+.choice input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.btn-appointment:active {
-  transform: scale(0.97);
+.choice i {
+  font-size: 1.05rem;
+}
+
+.choice:hover {
+  border-color: var(--seaglass);
+  background: var(--seaglass-soft);
+}
+
+.choice.is-selected {
+  border-color: var(--lagoon);
+  background: var(--seaglass);
+  color: var(--lagoon-deep);
+  font-weight: 450;
+}
+
+.choice.is-urgent.is-selected {
+  border-color: var(--rejected);
+  background: var(--rejected-bg);
+  color: var(--rejected);
+}
+
+.choice:has(input:focus-visible) {
+  outline: 2px solid var(--lagoon);
+  outline-offset: 2px;
+}
+
+.booking-submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  padding-top: 4px;
+}
+
+.booking-submit .btn-appointment {
+  min-height: 52px;
+  padding: 0 28px;
+  font-size: var(--text-md);
+}
+
+@media (max-width: 640px) {
+  .booking-section {
+    padding: 18px;
+  }
+
+  .booking-row {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-submit .btn-appointment {
+    width: 100%;
+  }
 }

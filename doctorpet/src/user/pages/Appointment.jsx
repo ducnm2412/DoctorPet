@@ -116,26 +116,26 @@ const jwt = localStorage.getItem("jwt");
       if (res.status === 201) {
          Swal.fire({
       icon: "success",
-      title: "Thành công",
-      text: "Đặt lịch thành công!",
+      title: "Đã gửi yêu cầu",
+      text: "Bác sĩ sẽ xem và duyệt lịch sớm. Theo dõi trạng thái trong mục Lịch đã đặt.",
     });
       } else if (res.status === 400) {
         Swal.fire({
       icon: "error",
-      title: "Thất bại",
-      text: "Đặt lịch thất bại — kiểm tra dữ liệu đầu vào.",
+      title: "Chưa đặt được lịch",
+      text: "Kiểm tra lại thời gian và thông tin rồi gửi lại.",
     });
       } else if (res.status === 401) {
         Swal.fire({
       icon: "warning",
-      title: "Chưa đăng nhập",
-      text: "Bạn chưa đăng nhập hoặc token không hợp lệ.",
+      title: "Phiên đăng nhập đã hết hạn",
+      text: "Hãy đăng nhập lại để tiếp tục đặt lịch.",
     });
       } else {
         Swal.fire({
       icon: "error",
-      title: "Lỗi",
-      text: `Đặt lịch thất bại, lỗi: ${res.status}`,
+      title: "Chưa đặt được lịch",
+      text: `Máy chủ báo lỗi ${res.status}. Vui lòng thử lại sau ít phút.`,
     });
       }
     } catch (error) {
@@ -144,109 +144,170 @@ const jwt = localStorage.getItem("jwt");
     }
   };
 
+  // Không cho chọn thời điểm trong quá khứ
+  const now = new Date();
+  const minDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0, 16);
+
   return (
     <form className="form-appointment" onSubmit={handleSubmit}>
-      <div className="row-1">
-        <div className="column-1">
-          <label>Thời gian khám:</label>
-          <input
-            type="datetime-local"
-            name="timeStart"
-            value={formData.timeStart}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="column-1">
-          <label>Loại lịch khám:</label>
-          <select
-            name="appointmentType"
-            value={formData.appointmentType}
-            onChange={handleChange}
-          >
-            <option value="NORMAL">Bình thường</option>
-            <option value="EMERGENCY">Khẩn cấp</option>
-          </select>
-        </div>
-      </div>
-
-      <label>Loại khám:</label>
-      <select name="type" value={formData.type} onChange={handleChange}> 
-        <option value="CHECKUP">Kiểm tra sức khỏe</option>
-        <option value="VACCINE">Tiêm ngừa</option>
-        <option value="SURGERY">Phẫu thuật</option>
-      </select>
-
-      <label>Địa điểm:</label>
-      <select
-        name="locationType"
-        value={formData.locationType}
-        onChange={handleChange}
-      >
-        <option value="AT_CLINIC">Tại phòng khám</option>
-        <option value="AT_HOME">Tại nhà</option>
-      </select>
-      <label>Ghi chú:</label>
-      <textarea
-        name="notes"
-        value={formData.notes}
-        onChange={handleChange}
-        rows="4"
-        placeholder="Nhập các triệu chứng, yêu cầu đặc biệt hoặc thông tin cần thiết khác..."></textarea>
-      {/*  THAY THẾ INPUT BẰNG DROPDOWN VÀ XỬ LÝ TRẠNG THÁI TẢI */}
       {isLoading ? (
-        <p style={{ marginTop: "15px", color: "#007bff" }}>Đang tải danh sách Thú cưng và Bác sĩ...</p>
+        <p className="state-text">Đang tải danh sách thú cưng và bác sĩ...</p>
       ) : (
-        <div className="row-1">
-          <div className="column-1">
-            <label>Thú cưng:</label>
-            <select
-              name="petId"
-              value={formData.petId}
-              onChange={handleChange}
-              required
-              // Vô hiệu hóa nếu không có Pet nào
-              disabled={pets.length === 0}
-            >
-              {pets.length > 0 ? pets.map((pet) => (
-                <option key={pet.id} value={pet.id}>
-                  {pet.name}
-                </option>
-              )) : <option value="" disabled>Không tìm thấy thú cưng</option>}
-            </select>
+        <fieldset className="booking-section">
+          <legend>Ai sẽ đi khám?</legend>
+          <div className="booking-row">
+            <div className="field">
+              <label htmlFor="book-pet">Thú cưng</label>
+              <select
+                id="book-pet"
+                name="petId"
+                value={formData.petId}
+                onChange={handleChange}
+                required
+                disabled={pets.length === 0}
+              >
+                {pets.length > 0 ? pets.map((pet) => (
+                  <option key={pet.id} value={pet.id}>
+                    {pet.name}
+                  </option>
+                )) : <option value="">Chưa có thú cưng</option>}
+              </select>
+              {pets.length === 0 && (
+                <span className="field-hint">Thêm hồ sơ ở mục Hồ sơ thú cưng trước khi đặt lịch.</span>
+              )}
+            </div>
+            <div className="field">
+              <label htmlFor="book-vet">Bác sĩ thú y</label>
+              <select
+                id="book-vet"
+                name="vetId"
+                value={formData.vetId}
+                onChange={handleChange}
+                required
+                disabled={vets.length === 0}
+              >
+                {vets.length > 0 ? vets.map((vet) => (
+                  <option key={vet.id} value={vet.id}>
+                    {[vet.lastName, vet.firstName].filter(Boolean).join(" ") || vet.name}
+                    {vet.specialization ? `, ${vet.specialization}` : ""}
+                  </option>
+                )) : <option value="">Chưa có bác sĩ</option>}
+              </select>
+            </div>
           </div>
-          <div className="column-1">
-            <label>Bác sĩ thú y:</label>
-            <select
-              name="vetId"
-              value={formData.vetId}
-              onChange={handleChange}
-              required
-              // Vô hiệu hóa nếu không có Vet nào
-              disabled={vets.length === 0}
-            >
-              {vets.length > 0 ? vets.map((vet) => (
-                <option key={vet.id} value={vet.id}>
-                  {vet.firstName} {vet.lastName} (ID: {vet.id})
-                </option>
-              )) : <option value="" disabled>Không tìm thấy bác sĩ thú y</option>}
-            </select>
-          </div>
-        </div>
+        </fieldset>
       )}
 
-      <button 
-        className="btn-appointment" 
-        type="submit" 
-        style={{ marginTop: "10px" }}
-        // Vô hiệu hóa nút Đặt lịch khi đang tải hoặc không có Pet/Vet
-        disabled={isLoading || pets.length === 0 || vets.length === 0 || !formData.timeStart}
-      >
-        Đặt lịch
-      </button>
+      <fieldset className="booking-section">
+        <legend>Khi nào và ở đâu?</legend>
+        <div className="booking-row">
+          <div className="field">
+            <label htmlFor="book-time">Thời gian khám</label>
+            <input
+              id="book-time"
+              type="datetime-local"
+              name="timeStart"
+              min={minDateTime}
+              value={formData.timeStart}
+              onChange={handleChange}
+              required
+            />
+            <span className="field-hint">Mỗi lượt khám kéo dài khoảng 1 giờ.</span>
+          </div>
+          <div className="field">
+            <span className="field-label" id="book-location-label">Địa điểm</span>
+            <div className="choice-group" role="radiogroup" aria-labelledby="book-location-label">
+              <label className={`choice ${formData.locationType === "AT_CLINIC" ? "is-selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="locationType"
+                  value="AT_CLINIC"
+                  checked={formData.locationType === "AT_CLINIC"}
+                  onChange={handleChange}
+                />
+                <i className="ri-hospital-line" aria-hidden="true"></i>
+                Tại phòng khám
+              </label>
+              <label className={`choice ${formData.locationType === "AT_HOME" ? "is-selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="locationType"
+                  value="AT_HOME"
+                  checked={formData.locationType === "AT_HOME"}
+                  onChange={handleChange}
+                />
+                <i className="ri-home-4-line" aria-hidden="true"></i>
+                Tại nhà
+              </label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
 
-      {message && <p style={{ marginTop: "10px", color: "red" }}>{message}</p>}
+      <fieldset className="booking-section">
+        <legend>Bé cần khám gì?</legend>
+        <div className="booking-row">
+          <div className="field">
+            <label htmlFor="book-type">Loại khám</label>
+            <select id="book-type" name="type" value={formData.type} onChange={handleChange}>
+              <option value="CHECKUP">Kiểm tra sức khỏe</option>
+              <option value="VACCINE">Tiêm phòng</option>
+              <option value="SURGERY">Phẫu thuật</option>
+            </select>
+          </div>
+          <div className="field">
+            <span className="field-label" id="book-urgency-label">Mức độ</span>
+            <div className="choice-group" role="radiogroup" aria-labelledby="book-urgency-label">
+              <label className={`choice ${formData.appointmentType === "NORMAL" ? "is-selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="appointmentType"
+                  value="NORMAL"
+                  checked={formData.appointmentType === "NORMAL"}
+                  onChange={handleChange}
+                />
+                Bình thường
+              </label>
+              <label className={`choice is-urgent ${formData.appointmentType === "EMERGENCY" ? "is-selected" : ""}`}>
+                <input
+                  type="radio"
+                  name="appointmentType"
+                  value="EMERGENCY"
+                  checked={formData.appointmentType === "EMERGENCY"}
+                  onChange={handleChange}
+                />
+                Khẩn cấp
+              </label>
+            </div>
+          </div>
+        </div>
+        <div className="field">
+          <label htmlFor="book-notes">Triệu chứng và ghi chú</label>
+          <textarea
+            id="book-notes"
+            name="notes"
+            value={formData.notes}
+            onChange={handleChange}
+            rows="4"
+            placeholder="Ví dụ: bỏ ăn từ hôm qua, nôn hai lần, vẫn uống nước bình thường."
+          ></textarea>
+        </div>
+      </fieldset>
+
+      {message && <p className="form-note is-error">{message}</p>}
+
+      <div className="booking-submit">
+        <button
+          className="btn btn-primary btn-appointment"
+          type="submit"
+          disabled={isLoading || pets.length === 0 || vets.length === 0 || !formData.timeStart}
+        >
+          Gửi yêu cầu đặt lịch
+        </button>
+        <p className="field-hint">Bác sĩ sẽ duyệt lịch và nhắn tin cho bạn trong mục Lịch đã đặt.</p>
+      </div>
     </form>
   );
 };

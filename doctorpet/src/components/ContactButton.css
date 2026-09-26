@@ -1,151 +1,52 @@
-/* Floating Contact Button */
+/* Nút trợ lý nổi: tĩnh, chỉ xuất hiện nhẹ một lần khi tải trang */
 .contact-button {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid #e5e7eb;
-  display: flex;
-  flex-direction: column;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 999;
-  transition: all 0.3s ease;
-  padding: 0;
-  overflow: visible;
-  animation: shake 2s ease-in-out infinite, pulse 2s ease-in-out infinite;
-}
-
-/* Hiệu ứng rung lắc */
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0) translateY(0) rotate(0deg);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-2px) translateY(-2px) rotate(-1deg);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(2px) translateY(2px) rotate(1deg);
-  }
-}
-
-/* Hiệu ứng pulse màu zoom ra zoom vào */
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(237, 138, 67, 0.7),
-      0 0 0 0 rgba(255, 187, 0, 0.5);
-  }
-  50% {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 15px rgba(237, 138, 67, 0),
-      0 0 0 25px rgba(255, 187, 0, 0);
-  }
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 22px 0 18px;
+  border-radius: var(--r-pill);
+  background: var(--lagoon);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: 450;
+  box-shadow: var(--shadow-float);
+  animation: contact-rise 0.6s var(--ease) 0.8s both;
+  transition: background-color 0.25s var(--ease);
 }
 
 .contact-button:hover {
-  transform: scale(1.05) translateX(0) translateY(0) rotate(0deg);
-  animation: shake-hover 0.5s ease-in-out infinite,
-    pulse-hover 1s ease-in-out infinite;
-  border-color: #ed8a43;
-  background: linear-gradient(90deg, #ed8a43, #ffbb00);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+  background: var(--lagoon-deep);
 }
 
-.contact-button:hover .contact-button-text {
-  color: #ffffff;
+.contact-button i {
+  font-size: 1.35rem;
 }
 
-/* Hiệu ứng rung khi hover */
-@keyframes shake-hover {
-  0%,
-  100% {
-    transform: scale(1.05) translateX(0) translateY(0) rotate(0deg);
+@keyframes contact-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
-  25% {
-    transform: scale(1.05) translateX(-3px) translateY(-3px) rotate(-2deg);
-  }
-  75% {
-    transform: scale(1.05) translateX(3px) translateY(3px) rotate(2deg);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Hiệu ứng pulse nhanh hơn khi hover */
-@keyframes pulse-hover {
-  0%,
-  100% {
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(237, 138, 67, 0.8),
-      0 0 0 0 rgba(255, 187, 0, 0.6);
-  }
-  50% {
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 0 20px rgba(237, 138, 67, 0),
-      0 0 0 30px rgba(255, 187, 0, 0);
-  }
-}
-
-.contact-button:active {
-  transform: scale(0.95) translateX(0) translateY(0) rotate(0deg);
-  animation: none;
-}
-
-.contact-button-icon {
-  width: 46px;
-  height: 46px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2px;
-}
-
-.contact-icon-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  border-radius: 8px;
-}
-
-.contact-button-text {
-  font-size: 13px;
-  color: #1f2937;
-  font-weight: 600;
-  line-height: 1;
-  margin-top: 2px;
-  white-space: nowrap;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .contact-button {
-    width: 70px;
-    height: 70px;
-    bottom: 20px;
-    right: 20px;
-  }
-
-  .contact-button-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .contact-icon-image {
-    width: 100%;
-    height: 100%;
+    right: 16px;
+    bottom: 16px;
+    min-height: 48px;
+    padding: 0 14px;
   }
 
   .contact-button-text {
-    font-size: 12px;
+    display: none;
   }
 }

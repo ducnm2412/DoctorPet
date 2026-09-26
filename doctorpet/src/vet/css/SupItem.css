@@ -1,45 +1,92 @@
 .sup-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 15px;
-  width: 100%;
-  box-shadow: 0 4px 12px rgba(255, 145, 77, 0.3);
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  transition: border-color 0.25s var(--ease);
+}
+
+.sup-card.is-selected {
+  border-color: var(--lagoon);
+}
+
+.sup-avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--seaglass);
+  color: var(--lagoon-deep);
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-lg);
+}
+
+.sup-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sup-info h3 {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  font-weight: 450;
+}
+
+.sup-info p {
+  overflow: hidden;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .sup-actions {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
 }
 
-.sup-actions button {
-  flex: 1;
-  padding: 6px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
+.sup-actions .btn {
+  min-height: 38px;
+  padding: 0 14px;
 }
 
-.sup-actions .btn-edit {
-  background-color: #4caf50;
-  color: white;
-  margin-right: 5px;
-}
-
-.sup-actions .btn-edit:hover {
-  background-color: #3e8e41;
+.sup-actions .btn i {
+  color: var(--lagoon);
 }
 
 .sup-actions .btn-delete {
-  background-color: #f44336;
-  color: white;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
 }
 
 .sup-actions .btn-delete:hover {
-  background-color: #d32f2f;
+  background: var(--rejected-bg);
+  color: var(--rejected);
+}
+
+@media (max-width: 640px) {
+  .sup-card {
+    flex-wrap: wrap;
+  }
+
+  .sup-actions {
+    width: 100%;
+  }
+
+  .sup-actions .btn {
+    flex: 1;
+  }
 }

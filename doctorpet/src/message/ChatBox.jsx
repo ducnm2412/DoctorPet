@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import "remixicon/fonts/remixicon.css";
 import "./css/ChatBox.css";
 import { API_URL } from "../config";
 
@@ -12,6 +11,7 @@ const ChatBox = ({
   isOpen = true,
   onMinimize,
   isMinimized = false,
+  statusText = "Đang hoạt động",
 }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -184,7 +184,7 @@ const ChatBox = ({
           id: Date.now() + 1,
           message: messageContent,
           senderId: "bot",
-          senderName: "Chatbot",
+          senderName: "Trợ lý DocPet",
           timestamp: new Date().toISOString(),
         };
 
@@ -231,7 +231,7 @@ const ChatBox = ({
           )}
           <div className="chat-box-header-text">
             <h4>{recipientName || "Người nhận"}</h4>
-            <span className="chat-box-status">Đang hoạt động</span>
+            <span className="chat-box-status">{statusText}</span>
           </div>
         </div>
         <div className="chat-box-header-actions">
@@ -272,12 +272,12 @@ const ChatBox = ({
             ) : error && messages.length === 0 ? (
               <div className="chat-box-empty">
                 <i className="ri-error-warning-line"></i>
-                <p style={{ color: "#ef4444" }}>{error}</p>
+                <p className="is-error">{error}</p>
               </div>
             ) : messages.length === 0 ? (
               <div className="chat-box-empty">
                 <i className="ri-message-3-line"></i>
-                <p>Chưa có tin nhắn nào. Hãy bắt đầu cuộc trò chuyện!</p>
+                <p>{appointmentId ? "Chưa có tin nhắn nào. Gửi lời chào để bắt đầu." : "Hỏi về triệu chứng, tiêm phòng hay cách chăm sóc thú cưng."}</p>
               </div>
             ) : (
               messages.map((m) => {
@@ -322,15 +322,7 @@ const ChatBox = ({
           {/* Input Area */}
           <div className="chat-box-input-area">
             {error && messages.length > 0 && (
-              <div
-                className="chat-box-error"
-                style={{
-                  color: "#ef4444",
-                  fontSize: "12px",
-                  padding: "4px 12px",
-                  marginBottom: "8px",
-                }}
-              >
+              <div className="chat-box-error">
                 <i className="ri-error-warning-line"></i> {error}
               </div>
             )}
@@ -346,13 +338,15 @@ const ChatBox = ({
                   }
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder={`Nhập tin nhắn... (${input.length}/${MAX_MESSAGE_LENGTH})`}
+                placeholder="Nhập tin nhắn..."
+                aria-label="Tin nhắn"
                 className="chat-box-input"
                 maxLength={MAX_MESSAGE_LENGTH}
                 disabled={sending}
               />
               <button
                 className="chat-box-send-btn"
+                aria-label="Gửi tin nhắn"
                 onClick={sendMessage}
                 disabled={!input.trim() || sending}
                 title={
@@ -362,10 +356,7 @@ const ChatBox = ({
                 }
               >
                 {sending ? (
-                  <i
-                    className="ri-loader-4-line"
-                    style={{ animation: "spin 1s linear infinite" }}
-                  ></i>
+                  <i className="ri-loader-4-line chat-box-spin"></i>
                 ) : (
                   <i className="ri-send-plane-fill"></i>
                 )}
@@ -373,13 +364,9 @@ const ChatBox = ({
             </div>
             {input.length > MAX_MESSAGE_LENGTH * 0.8 && (
               <div
-                style={{
-                  fontSize: "11px",
-                  color:
-                    input.length >= MAX_MESSAGE_LENGTH ? "#ef4444" : "#f59e0b",
-                  padding: "4px 12px",
-                  textAlign: "right",
-                }}
+                className={`chat-box-counter ${
+                  input.length >= MAX_MESSAGE_LENGTH ? "is-full" : ""
+                }`}
               >
                 {input.length}/{MAX_MESSAGE_LENGTH} ký tự
               </div>

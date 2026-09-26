@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../css/DetailAppointment.css";
+import AppointmentDetailView from "../../components/AppointmentDetailView";
 import Swal from "sweetalert2";
 import ButtonMessage from "../../message/ButtonMessage";
 import ChatBox from "../../message/ChatBox";
@@ -389,9 +389,9 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
   };
 
   // UI
-  if (loading) return <div>Đang tải chi tiết lịch hẹn...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
-  if (!appointment) return <div>Không tìm thấy lịch hẹn.</div>;
+  if (loading) return <p className="state-text">Đang tải chi tiết lịch hẹn...</p>;
+  if (error) return <p className="state-text is-error">{error}. Hãy quay lại danh sách và thử lần nữa.</p>;
+  if (!appointment) return <p className="state-text">Không tìm thấy lịch hẹn này.</p>;
 
   const isPending = appointment.status === "PENDING";
   const isApproved = appointment.status === "APPROVED";
@@ -426,158 +426,40 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
   };
 
   return (
-    <div className="appointment-detail">
-      {/* Nút quay lại */}
-      <button className="back-btn" onClick={onBack}>
-        <i className="ri-arrow-left-line"></i> Quay lại
-      </button>
-
-      <h2>Chi tiết lịch hẹn</h2>
-
-      {/* Thông tin cơ bản */}
-      <div className="row">
-        <p>
-          <strong>Trạng thái:</strong>{" "}
-          {appointment.status === "PENDING"
-            ? "Chờ duyệt"
-            : appointment.status === "APPROVED"
-            ? "Đã duyệt"
-            : appointment.status === "REJECTED"
-            ? "Từ chối"
-            : "Đổi lịch"}
-        </p>
-        <p>
-          <strong>Bắt đầu:</strong>{" "}
-          {new Date(appointment.timeStart).toLocaleString()}
-        </p>
-        <p>
-          <strong>Kết thúc:</strong>{" "}
-          {new Date(appointment.timeEnd).toLocaleString()}
-        </p>
-      </div>
-      <div className="row">
-        <p>
-          <strong>Loại lịch hẹn:</strong>{" "}
-          {appointment.type === "CHECKUP"
-            ? "Kiểm tra sức khỏe"
-            : appointment.type === "VACCINE"
-            ? "Tiêm chủng"
-            : "Phẫu thuật"}
-        </p>
-        <p>
-          <strong>Tình trạng:</strong>{" "}
-          {appointment.appointmentType === "EMERGENCY"
-            ? "Khẩn Cấp"
-            : "Bình Thường"}
-        </p>
-        <p>
-          <strong>Vị trí:</strong>{" "}
-          {appointment.locationType === "AT_HOME"
-            ? "Tại nhà"
-            : appointment.locationType === "AT_CLINIC"
-            ? "Tại phòng khám"
-            : ""}
-        </p>
-      </div>
-      <p>
-        <strong>Ghi chú:</strong> {appointment.notes || "Không có"}
-      </p>
-
-      {/* Thông tin Pet */}
-      <div className="row">
-        {appointment.pet && (
-          <div>
-            <h3>Thông tin thú cưng</h3>
-            <div className="row">
-              <p>
-                <strong>Tên:</strong> {appointment.pet.name}
-              </p>
-              <p>
-                <strong>Loài:</strong> {appointment.pet.species}
-              </p>
-            </div>
-            <div className="row">
-              <p>
-                <strong>Giống loài:</strong> {appointment.pet.breed}
-              </p>
-              <p>
-                <strong>Giới tính:</strong> {appointment.pet.sex}
-              </p>
-            </div>
-            <div className="row">
-              <p>
-                <strong>Ngày sinh:</strong> {appointment.pet.dateOfBirth}
-              </p>
-              <p>
-                <strong>Cân nặng:</strong> {appointment.pet.weight} kg
-              </p>
-            </div>
-            <div className="row">
-              <p>
-                <strong>Dị ứng:</strong>{" "}
-                {appointment.pet.allergies || "Không có"}
-              </p>
-              <p>
-                <strong>Ghi chú:</strong> {appointment.pet.notes || "Không có"}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Thông tin chủ nuôi */}
-        {appointment.owner && (
-          <div>
-            <h3>Thông tin chủ nuôi</h3>
-            <p>
-              <strong>Tên:</strong> {appointment.owner.name}
-            </p>
-            <p>
-              <strong>Họ và tên:</strong> {appointment.owner.firstName}{" "}
-              {appointment.owner.lastName}
-            </p>
-            <p>
-              <strong>Số điện thoại:</strong> {appointment.owner.phone}
-            </p>
-            <p>
-              <strong>Địa chỉ:</strong> {appointment.owner.address}
-            </p>
-          </div>
-        )}
-      </div>
-      {/* Buttons */}
-      <div className="btn-group">
-        {isPending && (
-          <div className="approve-reject-group">
-            <button className="approve" onClick={handleApprove}>
-              Duyệt lịch
-            </button>
-
-            <button className="reject" onClick={handleReject}>
-              Từ chối
-            </button>
-          </div>
-        )}
-
-        {/* Hiển thị nút "Yêu cầu khám tại nhà" cho đơn đã duyệt 
-            nhưng chưa phải khám tại nhà */}
-        {isApproved && isNotHomeVisit && (
-          <button
-            className="request-home-visit-btn"
-            onClick={handleRequestHomeVisit}
-          >
-            <i className="ri-home-4-line"></i>
-            Yêu cầu khám tại nhà
-          </button>
-        )}
-
-        <ButtonMessage
-          onClick={handleMessage}
-          text="Nhắn tin"
-          variant="secondary"
-          icon="ri-message-3-line"
-          unreadCount={unreadCount}
-        />
-      </div>
+    <>
+      <AppointmentDetailView
+        appointment={appointment}
+        onBack={onBack}
+        actions={
+          <>
+            <ButtonMessage
+              onClick={handleMessage}
+              text="Nhắn tin với chủ nuôi"
+              variant="secondary"
+              icon="ri-message-3-line"
+              unreadCount={unreadCount}
+            />
+            <span className="spacer" />
+            {/* Đơn đã duyệt nhưng chưa phải khám tại nhà */}
+            {isApproved && isNotHomeVisit && (
+              <button className="btn btn-quiet request-home-visit-btn" onClick={handleRequestHomeVisit}>
+                <i className="ri-home-4-line" aria-hidden="true"></i>
+                Đề nghị khám tại nhà
+              </button>
+            )}
+            {isPending && (
+              <>
+                <button className="btn btn-danger reject" onClick={handleReject}>
+                  Từ chối hoặc đổi lịch
+                </button>
+                <button className="btn btn-primary approve" onClick={handleApprove}>
+                  Duyệt lịch
+                </button>
+              </>
+            )}
+          </>
+        }
+      />
 
       {/* ChatBox */}
       {isChatOpen && (
@@ -596,7 +478,7 @@ const DetailAppointment = ({ appointmentId, onBack, onApproved }) => {
           onMinimize={() => setIsChatMinimized(!isChatMinimized)}
         />
       )}
-    </div>
+    </>
   );
 };
 

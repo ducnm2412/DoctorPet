@@ -1,0 +1,460 @@
+/* Layout chung cho khu vực chủ nuôi, bác sĩ, trợ lý */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  max-width: 1320px;
+  min-height: calc(100vh - var(--header-h));
+  margin: 0 auto;
+  padding: 32px clamp(16px, 4vw, 48px) 96px;
+}
+
+/* ---------- Sidebar ---------- */
+.dashboard-container .sidebar {
+  position: sticky;
+  top: calc(var(--header-h) + 24px);
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.profile-card {
+  position: relative;
+  padding: 24px 20px 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-frame);
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 36px;
+}
+
+.profile-head .avatar {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--seaglass);
+}
+
+.profile-name {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-lg);
+  line-height: 1.25;
+}
+
+.profile-role {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+}
+
+.profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-field > span {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+}
+
+.profile-field .info-input,
+.profile-field .info-value {
+  width: 100%;
+  min-height: 24px;
+  padding: 0;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  outline: none;
+  overflow-wrap: anywhere;
+}
+
+/* Khi đang sửa: ô nhập hiện viền */
+.profile-field .info-input:not(:read-only) {
+  min-height: 40px;
+  padding: 8px 12px;
+  background: #fff;
+  border-color: var(--line);
+}
+
+.profile-field .info-input:not(:read-only):focus {
+  border-color: var(--lagoon);
+  box-shadow: 0 0 0 4px rgba(38, 107, 103, 0.12);
+}
+
+.profile-field .info-input::placeholder {
+  color: #8c9ba3;
+}
+
+/* Nút mở thông tin liên hệ - chỉ hiện trên mobile */
+.profile-toggle {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: var(--text-xs);
+  color: var(--lagoon);
+}
+
+.profile-card .edit-profile-btn {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 18px;
+}
+
+/* Nút thông báo */
+.notification-icon {
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  font-size: 1.2rem;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.notification-icon:hover,
+.notification-icon[aria-expanded="true"] {
+  background: var(--seaglass-soft);
+  color: var(--lagoon);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border: 2px solid var(--paper);
+  border-radius: var(--r-pill);
+  background: var(--rejected);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 500;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 64px;
+  left: calc(100% - 24px);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  max-height: 460px;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-float);
+}
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 12px 14px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.notification-header h4 {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-md);
+  font-weight: 500;
+}
+
+.notification-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--ink-soft);
+}
+
+.notification-close:hover {
+  background: var(--seaglass-soft);
+}
+
+.notification-list {
+  overflow-y: auto;
+}
+
+.notification-empty {
+  padding: 40px 20px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.notification-empty i {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 2rem;
+  color: var(--lagoon);
+  opacity: 0.5;
+}
+
+.notification-empty p {
+  font-size: var(--text-sm);
+}
+
+.notification-item {
+  display: block;
+  width: 100%;
+  padding: 12px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.2s var(--ease);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background: var(--seaglass-soft);
+}
+
+.notification-item.unread {
+  background: var(--seaglass-soft);
+}
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notification-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  font-weight: 450;
+}
+
+.notification-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lagoon);
+}
+
+.notification-message {
+  overflow: hidden;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+/* Menu */
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  text-align: left;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.menu-btn i {
+  font-size: 1.15rem;
+}
+
+.menu-btn:hover {
+  background: var(--seaglass-soft);
+  color: var(--ink);
+}
+
+.menu-btn.active {
+  background: var(--seaglass);
+  color: var(--lagoon-deep);
+  font-weight: 450;
+}
+
+/* ---------- Nội dung chính ---------- */
+.dashboard-container .main-content {
+  min-width: 0;
+}
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.page-head h1 {
+  font-size: var(--text-3xl);
+  font-weight: 400;
+}
+
+.page-head p {
+  max-width: 60ch;
+  margin-top: 6px;
+  color: var(--ink-soft);
+}
+
+/* Nhóm nút lọc dạng viên thuốc */
+.filter-buttons,
+.tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.filter-buttons button,
+.btn-tab {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+}
+
+.filter-buttons button:hover,
+.btn-tab:hover {
+  color: var(--ink);
+  border-color: var(--seaglass);
+  background: var(--seaglass-soft);
+}
+
+.filter-buttons button.active,
+.btn-tab.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.tab-bar .input {
+  width: auto;
+  min-height: 38px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+}
+
+.page-state {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 64px clamp(16px, 4vw, 48px);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    padding-top: 20px;
+  }
+
+  /* Mobile: thẻ cá nhân thu gọn, menu dính dưới header */
+  .dashboard-container .sidebar {
+    display: contents;
+  }
+
+  .profile-card {
+    padding: 16px;
+  }
+
+  .profile-card:not(.is-expanded) .profile-fields,
+  .profile-card:not(.is-expanded) .edit-profile-btn {
+    display: none;
+  }
+
+  .profile-toggle {
+    display: inline-flex;
+  }
+
+  .profile-head {
+    padding-right: 44px;
+  }
+
+  .notification-icon {
+    top: 16px;
+  }
+
+  .menu-section {
+    position: sticky;
+    top: calc(var(--header-h) + 8px);
+    z-index: 50;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    box-shadow: 0 8px 24px -16px rgba(43, 61, 79, 0.35);
+  }
+
+  .menu-section::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu-btn {
+    flex: 0 0 auto;
+    width: auto;
+  }
+
+  .notification-dropdown {
+    left: 12px;
+    right: 12px;
+    width: auto;
+  }
+
+  .page-head h1 {
+    font-size: var(--text-2xl);
+  }
+}

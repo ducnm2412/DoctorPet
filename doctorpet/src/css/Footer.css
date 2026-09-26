@@ -1,13 +1,54 @@
+.site-footer {
+  padding: 56px clamp(16px, 5vw, 64px) 32px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
 
-.footer {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  height: 70px;
-  background-color: white; /* Màu nền đen xám */
-  color: #facc15;           /* Màu chữ vàng nhạt */
-  text-align: center;
-  padding: 20px 0;
-  font-size: 16px;
-  font-weight: 500;
-  width: 100vw;
-  border-top: 2px solid #ff914d;
+.site-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 32px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.site-footer-brand {
+  max-width: 340px;
+}
+
+.site-footer-brand img {
+  height: 56px;
+  width: auto;
+  margin-bottom: 12px;
+}
+
+.site-footer-brand p {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.site-footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: var(--text-sm);
+}
+
+.site-footer-links a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.site-footer-links a:hover {
+  color: var(--lagoon);
+}
+
+.site-footer-credit {
+  max-width: 1180px;
+  margin: 40px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
 }

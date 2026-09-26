@@ -2,18 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ContactButton from "./ContactButton";
 import ChatBox from "../message/ChatBox";
-import Swal from "sweetalert2";
-import "remixicon/fonts/remixicon.css";
 import { API_URL } from "../config";
+import { OPEN_CHATBOT_EVENT } from "./navigation";
 
 const GlobalContactButton = () => {
   const location = useLocation();
-
-  // Ẩn chatbot trên các trang: bác sĩ, login, đăng ký
-  const hiddenPaths = ["/vet", "/login", "/register", "/register-vet"];
-  if (hiddenPaths.some((path) => location.pathname.startsWith(path))) {
-    return null;
-  }
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isChatMinimized, setIsChatMinimized] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
@@ -88,17 +81,27 @@ const GlobalContactButton = () => {
     setSelectedAppointment(appointment);
   }, [selectedAppointmentId, allAppointments]);
 
-  // Xử lý khi click nút "Tư vấn"
+  // Mở chatbot công khai (không cần đăng nhập, ai cũng dùng được)
   const handleContactClick = () => {
-    // Luôn mở chatbot công khai trước (không cần đăng nhập, ai cũng dùng được)
     setSelectedAppointmentId(null); // null = chatbot công khai
     setIsChatOpen(true);
     setIsChatMinimized(false);
   };
 
+  useEffect(() => {
+    window.addEventListener(OPEN_CHATBOT_EVENT, handleContactClick);
+    return () => window.removeEventListener(OPEN_CHATBOT_EVENT, handleContactClick);
+  }, []);
+
+  // Ẩn chatbot trên các trang: bác sĩ, login, đăng ký
+  const hiddenPaths = ["/vet", "/login", "/register", "/register-vet"];
+  if (hiddenPaths.some((path) => location.pathname.startsWith(path))) {
+    return null;
+  }
+
   return (
     <>
-      {/* Ẩn nút "Tư vấn" khi khung chat đang mở (kể cả khi thu nhỏ) */}
+      {/* Ẩn nút khi khung chat đang mở (kể cả khi thu nhỏ) */}
       {!isChatOpen && <ContactButton onClick={handleContactClick} />}
 
       {isChatOpen && (
@@ -110,11 +113,12 @@ const GlobalContactButton = () => {
               ? selectedAppointment?.vet?.fullName ||
                 selectedAppointment?.vet?.name ||
                 "Bác sĩ"
-              : "Chatbot AI"
+              : "Trợ lý DocPet"
           }
           recipientAvatar={
             selectedAppointmentId ? selectedAppointment?.vet?.avatar : null
           }
+          statusText={selectedAppointmentId ? undefined : "Trả lời tự động bằng AI"}
           isOpen={isChatOpen}
           isMinimized={isChatMinimized}
           onClose={() => {

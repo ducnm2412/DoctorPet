@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import QuestionItem from "../components/QuestionItem";
-import "remixicon/fonts/remixicon.css";
 import "../css/Question.css";
 const Question = () => {
   const [data, setData] = useState([
@@ -47,19 +46,20 @@ const Question = () => {
         </div>
         <div className={`add-item-question ${showQuestion === true ? "close" : ""}`} onClick={handleShowQuestion}>
           <div className="icon-add-question">
-            <i class="ri-add-fill"></i>
+            <i className="ri-add-fill"></i>
           </div>
         </div>
         {showQuestion && (
         <div className="form-add-question">
           <form className="form-input" onSubmit={handleAddQuestion}>
             <textarea
+              className="input"
               value={newQuestion}
               onChange={(e) => setNewQuestion(e.target.value)}
               placeholder="Nhập câu hỏi của bạn..."
               rows={3}
             />
-            <button className="btn-add-question" type="submit">Gửi câu hỏi</button>
+            <button className="btn btn-primary btn-add-question" type="submit">Gửi câu hỏi</button>
           </form>
         </div>
       )}

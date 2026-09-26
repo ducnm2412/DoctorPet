@@ -116,17 +116,40 @@ const SiderbarPet = (props) => {
   };
 
   return (
-    <div className={`pet-sidebar show`}>
-      <form className="pet-form" onSubmit={handleSubmit}>
-        <h3>Thú Cưng Của Bạn</h3>
+    <div
+      className="pet-sidebar"
+      onMouseDown={(e) => {
+        // bấm ra ngoài hộp thoại để đóng
+        if (e.target === e.currentTarget && !loading) props.handleCancelPetForm();
+      }}
+    >
+      <form
+        className="pet-form"
+        onSubmit={handleSubmit}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pet-form-title"
+      >
+        <div className="pet-form-head">
+          <h3 id="pet-form-title">{pet ? `Hồ sơ của ${pet.name}` : "Thêm thú cưng"}</h3>
+          <button
+            type="button"
+            className="pet-form-close"
+            onClick={handleCancel}
+            aria-label="Đóng"
+            disabled={loading}
+          >
+            <i className="ri-close-line" aria-hidden="true"></i>
+          </button>
+        </div>
 
-        {error && <p className="error-message">{error}</p>}
+        {error && <p className="form-note is-error">{error}</p>}
 
-        <div className="row">
-          <div className="column">
-            <label className="pet-form-label">Tên thú cưng*</label>
+        <div className="pet-form-row">
+          <div className="field">
+            <label htmlFor="pet-name">Tên thú cưng *</label>
             <input
-              className="pet-form-input"
+              id="pet-name"
               type="text"
               name="name"
               value={formData.name}
@@ -134,11 +157,10 @@ const SiderbarPet = (props) => {
               required
             />
           </div>
-
-          <div className="column">
-            <label className="pet-form-label">Ngày sinh*</label>
+          <div className="field">
+            <label htmlFor="pet-dob">Ngày sinh *</label>
             <input
-              className="pet-form-input"
+              id="pet-dob"
               type="date"
               name="dateOfBirth"
               value={formData.dateOfBirth}
@@ -146,101 +168,92 @@ const SiderbarPet = (props) => {
               required
             />
           </div>
-
-
         </div>
 
-        <div className="row">
-
-          <div className="column">
-            <label className="pet-form-label">Loài</label>
+        <div className="pet-form-row">
+          <div className="field">
+            <label htmlFor="pet-species">Loài</label>
             <input
-              className="pet-form-input"
+              id="pet-species"
               type="text"
               name="species"
               value={formData.species}
               onChange={handleChange}
-              placeholder="VD: Huy, Chó, Mèo,..."
+              placeholder="Chó, mèo, thỏ..."
             />
           </div>
-
-          <div className="column">
-            <label className="pet-form-label">Giống loài*</label>
+          <div className="field">
+            <label htmlFor="pet-breed">Giống *</label>
             <input
-              className="pet-form-input"
+              id="pet-breed"
               type="text"
               name="breed"
               value={formData.breed}
               onChange={handleChange}
+              placeholder="Ví dụ: Corgi"
               required
             />
           </div>
-
         </div>
 
-        <div className="row">
-
-          <div className="column">
-            <label className="pet-form-label">Giới tính*</label>
+        <div className="pet-form-row">
+          <div className="field">
+            <label htmlFor="pet-sex">Giới tính *</label>
             <select
-              className="pet-form-select"
+              id="pet-sex"
               name="sex"
               value={formData.sex}
               onChange={handleChange}
               required
             >
-              <option value="">--Chọn giới tính--</option>
+              <option value="">Chọn giới tính</option>
               <option value="Đực">Đực</option>
               <option value="Cái">Cái</option>
             </select>
           </div>
-
-          <div className="column">
-            <label className="pet-form-label">Cân nặng (kg)</label>
+          <div className="field">
+            <label htmlFor="pet-weight">Cân nặng (kg)</label>
             <input
-              className="pet-form-input"
+              id="pet-weight"
               type="number"
               name="weight"
               value={formData.weight}
               onChange={handleChange}
               min="0"
-            />
-          </div>
-
-        </div>
-        <div className="row">
-          <div className="column">
-            <label className="pet-form-label">Dị ứng</label>
-            <input
-              className="pet-form-input"
-              type="text"
-              name="allergies"
-              value={formData.allergies}
-              onChange={handleChange}
+              step="0.1"
             />
           </div>
         </div>
 
+        <div className="field">
+          <label htmlFor="pet-allergies">Dị ứng</label>
+          <input
+            id="pet-allergies"
+            type="text"
+            name="allergies"
+            value={formData.allergies}
+            onChange={handleChange}
+            placeholder="Thức ăn, thuốc... nếu có"
+          />
+        </div>
 
-
-        <label className="pet-form-label">Ghi chú</label>
-        <textarea
-          className="pet-form-textarea"
-          name="notes"
-          value={formData.notes}
-          onChange={handleChange}
-        ></textarea>
+        <div className="field">
+          <label htmlFor="pet-notes">Ghi chú</label>
+          <textarea
+            id="pet-notes"
+            name="notes"
+            value={formData.notes}
+            onChange={handleChange}
+            placeholder="Tính cách, bệnh nền hoặc điều bác sĩ nên biết"
+          ></textarea>
+        </div>
 
         <div className="sb-footer">
-          <button className="save-btn" type="submit" disabled={loading}>
-            {loading ? "Đang lưu..." : "Lưu"}
-          </button>
-          <button
-            className="cancel-btn"
-            onClick={handleCancel}
-            disabled={loading}
-          >
+          <button className="btn btn-quiet cancel-btn" type="button" onClick={handleCancel} disabled={loading}>
             Hủy
+          </button>
+          <button className="btn btn-primary save-btn" type="submit" disabled={loading}>
+            {loading ? "Đang lưu..." : pet ? "Lưu thay đổi" : "Thêm thú cưng"}
           </button>
         </div>
       </form>

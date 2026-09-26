@@ -1,159 +1,113 @@
+/* Hộp thoại thêm / sửa trợ lý */
 .main-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+  overflow-y: auto;
+  background: rgba(43, 61, 79, 0.28);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: overlay-in 0.25s var(--ease);
 }
+
 .add-sup-container {
-    position: absolute;
-    background-color: white;
-    z-index: 1000;
-    top: 10px;
-    right: 10px;
-    max-width: 400px;
-    width: 100%;
-    padding: 22px 40px;
-    border-radius: 18px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e8ecef;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  background: var(--paper);
+  border-radius: var(--r-frame);
+  box-shadow: var(--shadow-float);
+  animation: dialog-in 0.3s var(--ease);
 }
 
-.add-sup-container h2 {
-    text-align: center;
-    margin-bottom: 28px;
-    color: #2c3e50;
-    font-size: 28px;
-    font-weight: 600;
-    position: relative;
+.add-sup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.add-sup-container h2::after {
-    content: '';
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #f5e9c7, #f7e5b2);
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 2px;
+.add-sup-head h2 {
+  font-size: var(--text-2xl);
+  font-weight: 400;
 }
 
-.form-message {
-    text-align: center;
-    padding: 14px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    font-weight: 500;
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-    font-size: 15px;
+.add-sup-close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  font-size: 1.25rem;
+}
+
+.add-sup-close:hover {
+  background: var(--seaglass-soft);
+  color: var(--ink);
+}
+
+.add-sup-intro {
+  margin: 6px 0 22px;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
 }
 
 .sup-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* Dòng 2 input nằm ngang: Họ + Tên */
 .name-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
-/* Input chung */
-.sup-form input {
-    padding: 14px 18px;
-    border: 2px solid #dfe6e9;
-    border-radius: 12px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background-color: #f8fffc;
-    width: 100%;
-}
-
-.sup-form input:focus {
-    outline: none;
-    border-color: #f7e5b2;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 4px #f3dd9fb4;
-    transform: translateY(-1px);
-}
-
-.sup-form input::placeholder {
-    color: #636e72;
-    font-weight: 500;
-}
-
-/* Nút hành động */
 .button-group {
-    display: flex;
-    gap: 14px;
-    margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
 }
 
-.sup-form button {
-    flex: 1;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.sup-form button[type="submit"] {
-    background: linear-gradient(135deg, #f8e8c2, #fcdd8a);
-    color: white;
-    box-shadow: 0 4px 15px #f7e5b297;
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.sup-form button[type="submit"]:hover {
-    background: linear-gradient(135deg, #d9ca9f, #e0c069);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px #f7e5b2a7;
-}
+@media (max-width: 520px) {
+  .main-container {
+    padding: 16px 12px;
+  }
 
-.sup-form button[type="button"] {
-    background-color: #f1f2f6;
-    color: #636e72;
-    border: 1px solid #dfe6e9;
-}
-
-.sup-form button[type="button"]:hover {
-    background-color: #dfe4ea;
-    color: #2d3436;
-    transform: translateY(-2px);
-}
-
-/* Responsive */
-@media (max-width: 640px) {
   .add-sup-container {
-    margin: 20px;
-    padding: 28px 24px;
-    border-radius: 16px;
+    padding: 22px 18px;
   }
 
   .name-row {
     grid-template-columns: 1fr;
   }
 
-  .button-group {
-    flex-direction: column;
-  }
-
-  .sup-form button {
-    padding: 14px;
+  .button-group .btn {
+    flex: 1;
   }
 }

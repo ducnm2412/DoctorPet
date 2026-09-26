@@ -1,31 +1,50 @@
-.main-content::-webkit-scrollbar {
-  display: none;
-}
-.main-content .main-item {
+.pet-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-
-  justify-items: center;   
-  align-items: center; 
-  margin: auto;   
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
 }
-/*ADD-ITEM*/
+
+/* Ô "Thêm thú cưng" */
 .add-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: white;
-  transition: 0.2s ease;
+  gap: 6px;
+  min-height: 260px;
+  padding: 24px;
+  border: 1.5px dashed #bcd3cd;
+  border-radius: var(--r-card);
+  color: var(--ink-soft);
+  text-align: center;
+  transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease);
 }
-.add-item .add-item-icon{
-  font-size: 100px;
+
+.add-item:hover {
+  background: var(--paper);
+  border-color: var(--lagoon);
+}
+
+.add-item-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 8px;
   border-radius: 50%;
-  border: 2px dashed #ccc;
-  color: #ccc;
+  background: var(--seaglass);
+  color: var(--lagoon-deep);
+  font-size: 1.5rem;
 }
-.add-item .add-item-icon:hover {
-  border: 2px dashed #000;
-  color: #000;
+
+.add-item-title {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100;
+  font-size: var(--text-lg);
+  color: var(--ink);
+}
+
+.add-item-text {
+  max-width: 24ch;
+  font-size: var(--text-sm);
 }

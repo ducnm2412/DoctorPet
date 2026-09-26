@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../css/UserLayout.css";
+import "../../css/Dashboard.css";
 import Header from "../../components/Header";
-import "remixicon/fonts/remixicon.css";
 import ProfilePet from "../pages/ProfilePet";
 import Appointment from "../pages/Appointment";
 import Schedule from "../pages/Schedule";
@@ -9,6 +8,35 @@ import Question from "../pages/Question";
 import Swal from "sweetalert2";
 import ChatBox from "../../message/ChatBox";
 import { API_URL } from "../../config";
+
+// Các mục trong khu vực chủ nuôi
+const PAGES = {
+  profile: {
+    label: "Hồ sơ thú cưng",
+    icon: "ri-bear-smile-line",
+    title: "Hồ sơ thú cưng",
+    description: "Thông tin của từng bé, dùng cho mọi lần đặt lịch khám.",
+  },
+  appointment: {
+    label: "Đặt lịch khám",
+    icon: "ri-calendar-schedule-line",
+    title: "Đặt lịch khám",
+    description: "Chọn bé, bác sĩ và thời gian phù hợp. Bác sĩ sẽ duyệt lịch và nhắn tin cho bạn.",
+  },
+  schedule: {
+    label: "Lịch đã đặt",
+    icon: "ri-calendar-check-line",
+    title: "Lịch đã đặt",
+    description: "Theo dõi trạng thái lịch hẹn và nhắn tin với bác sĩ.",
+  },
+  question: {
+    hidden: true,
+    label: "Hỏi đáp",
+    icon: "ri-question-answer-line",
+    title: "Hỏi đáp",
+    description: "Câu hỏi của bạn và phản hồi từ bác sĩ.",
+  },
+};
 
 const UserLayout = () => {
   const [active, setActive] = useState("profile");
@@ -27,6 +55,7 @@ const UserLayout = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isChatMinimized, setIsChatMinimized] = useState(false);
   const [allAppointments, setAllAppointments] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
   useEffect(() => {
     const fetchOwners = async () => {
       try {
@@ -260,7 +289,6 @@ const UserLayout = () => {
         text: "Bạn cần đặt lịch hẹn trước khi có thể liên hệ với bác sĩ.",
         icon: "info",
         confirmButtonText: "Đặt lịch ngay",
-        confirmButtonColor: "#ed8a43",
       }).then((result) => {
         if (result.isConfirmed) {
           setActive("appointment");
@@ -275,34 +303,70 @@ const UserLayout = () => {
     return allAppointments.find((appt) => appt.id === selectedAppointmentId);
   };
 
-  if (loading) return <p>Đang tải dữ liệu...</p>;
-  if (error) return <p>Lỗi: {error}</p>;
-  console.log("User Info:", userInfo);
+  if (loading)
+    return (
+      <>
+        <Header />
+        <p className="state-text page-state">Đang tải thông tin của bạn...</p>
+      </>
+    );
+  if (error)
+    return (
+      <>
+        <Header />
+        <p className="state-text is-error page-state">
+          Chưa tải được thông tin tài khoản ({error}). Hãy tải lại trang hoặc đăng nhập lại.
+        </p>
+      </>
+    );
   const selectedAppointment = getSelectedAppointment();
+  const displayName = userInfo.name || `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
+  const page = PAGES[active];
   return (
     <>
       <Header />
       <div className="dashboard-container">
         {/* Sidebar */}
-        <div className="sidebar">
-          <div className="profile-section">
-            <div
+        <aside className="sidebar">
+          <div className={`profile-card ${showDetails || isEditing ? "is-expanded" : ""}`}>
+            <div className="profile-head">
+              <img className="avatar" src="/assets/person-placeholder.svg" alt="" />
+              <div>
+                <p className="profile-name">{displayName || "Chủ nuôi"}</p>
+                <p className="profile-role">Chủ nuôi</p>
+                <button
+                  type="button"
+                  className="profile-toggle"
+                  aria-expanded={showDetails}
+                  onClick={() => setShowDetails(!showDetails)}
+                >
+                  {showDetails ? "Thu gọn" : "Thông tin liên hệ"}
+                  <i className={showDetails ? "ri-arrow-up-s-line" : "ri-arrow-down-s-line"} aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="button"
               className="notification-icon"
+              aria-label={`Thông báo tin nhắn${unreadCount > 0 ? `, ${unreadCount} chưa đọc` : ""}`}
+              aria-expanded={showNotifications}
               onClick={() => setShowNotifications(!showNotifications)}
             >
-              <i className="ri-notification-3-line"></i>
+              <i className="ri-notification-3-line" aria-hidden="true"></i>
               {unreadCount > 0 && (
                 <span className="notification-badge">{unreadCount}</span>
               )}
-            </div>
+            </button>
 
             {/* Dropdown thông báo */}
             {showNotifications && (
               <div className="notification-dropdown">
                 <div className="notification-header">
-                  <h4>Thông báo tin nhắn</h4>
+                  <h4>Tin nhắn từ bác sĩ</h4>
                   <button
                     className="notification-close"
+                    aria-label="Đóng thông báo"
                     onClick={() => setShowNotifications(false)}
                   >
                     <i className="ri-close-line"></i>
@@ -312,11 +376,12 @@ const UserLayout = () => {
                   {notifications.length === 0 ? (
                     <div className="notification-empty">
                       <i className="ri-message-3-line"></i>
-                      <p>Chưa có tin nhắn nào</p>
+                      <p>Chưa có tin nhắn nào. Tin nhắn từ bác sĩ sẽ hiện ở đây.</p>
                     </div>
                   ) : (
                     notifications.map((notif) => (
-                      <div
+                      <button
+                        type="button"
                         key={notif.appointmentId}
                         className={`notification-item ${
                           notif.isUnread ? "unread" : ""
@@ -347,51 +412,47 @@ const UserLayout = () => {
                             })}
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))
                   )}
                 </div>
               </div>
             )}
 
-            <img
-              className="avatar"
-              src="../public/assets/meme.jpg"
-              alt="avatar"
-            />
-            <input
-              type="text"
-              placeholder="Tên người dùng"
-              className="info-input"
-              value={userInfo.name}
-              readOnly
-            />
-            <input
-              type="text"
-              placeholder="Số điện thoại"
-              className="info-input"
-              value={userInfo.phone}
-              onChange={
-                isEditing
-                  ? (e) => setUserInfo({ ...userInfo, phone: e.target.value })
-                  : undefined
-              }
-              readOnly={!isEditing}
-            />
-            <input
-              type="text"
-              placeholder="Địa chỉ"
-              className="info-input"
-              value={userInfo.address}
-              onChange={
-                isEditing
-                  ? (e) => setUserInfo({ ...userInfo, address: e.target.value })
-                  : undefined
-              }
-              readOnly={!isEditing}
-            />
+            <div className="profile-fields">
+              <label className="profile-field">
+                <span>Số điện thoại</span>
+                <input
+                  type="text"
+                  placeholder={isEditing ? "Nhập số điện thoại" : "Chưa có"}
+                  className="info-input"
+                  value={userInfo.phone}
+                  onChange={
+                    isEditing
+                      ? (e) => setUserInfo({ ...userInfo, phone: e.target.value })
+                      : undefined
+                  }
+                  readOnly={!isEditing}
+                />
+              </label>
+              <label className="profile-field">
+                <span>Địa chỉ</span>
+                <input
+                  type="text"
+                  placeholder={isEditing ? "Nhập địa chỉ" : "Chưa có"}
+                  className="info-input"
+                  value={userInfo.address}
+                  onChange={
+                    isEditing
+                      ? (e) => setUserInfo({ ...userInfo, address: e.target.value })
+                      : undefined
+                  }
+                  readOnly={!isEditing}
+                />
+              </label>
+            </div>
             <button
-              className="edit-profile-btn"
+              className={`btn ${isEditing ? "btn-primary" : "btn-quiet"} edit-profile-btn`}
               onClick={() => {
                 // Khi nhấn Lưu (isEditing là true), gọi API update, sau đó chuyển sang chế độ Sửa
                 if (isEditing) updateOwner();
@@ -399,34 +460,35 @@ const UserLayout = () => {
                 setIsEditing(!isEditing);
               }}
             >
-              {isEditing ? "Lưu" : "Sửa"}
+              {isEditing ? "Lưu thông tin" : "Sửa thông tin liên hệ"}
             </button>
           </div>
 
-          <div className="menu-section">
-            <button
-              className={`menu-btn ${active === "profile" ? "active" : ""}`}
-              onClick={() => setActive("profile")}
-            >
-              Hồ sơ thú cưng
-            </button>
-            <button
-              className={`menu-btn ${active === "appointment" ? "active" : ""}`}
-              onClick={() => setActive("appointment")}
-            >
-              Đặt lịch khám
-            </button>
-            <button
-              className={`menu-btn ${active === "schedule" ? "active" : ""}`}
-              onClick={() => setActive("schedule")}
-            >
-              Lịch đã đặt
-            </button>
-          </div>
-        </div>
+          <nav className="menu-section" aria-label="Mục">
+            {Object.entries(PAGES).map(([key, item]) =>
+              item.hidden ? null : (
+                <button
+                  key={key}
+                  className={`menu-btn ${active === key ? "active" : ""}`}
+                  aria-current={active === key ? "page" : undefined}
+                  onClick={() => setActive(key)}
+                >
+                  <i className={item.icon} aria-hidden="true"></i>
+                  {item.label}
+                </button>
+              )
+            )}
+          </nav>
+        </aside>
 
         {/* Main content */}
-        <div className="main-content">
+        <main className="main-content">
+          <div className="page-head">
+            <div>
+              <h1>{page.title}</h1>
+              <p>{page.description}</p>
+            </div>
+          </div>
           {isChatOpen && selectedAppointmentId && (
             <ChatBox
               appointmentId={selectedAppointmentId}
@@ -458,7 +520,7 @@ const UserLayout = () => {
           {active === "appointment" && <Appointment ownerId={userInfo.id} />}
           {active === "schedule" && <Schedule ownerId={userInfo.id} />}
           {active === "question" && <Question ownerId={userInfo.id} />}
-        </div>
+        </main>
       </div>
     </>
   );
